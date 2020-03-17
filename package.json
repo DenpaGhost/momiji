@@ -2,7 +2,12 @@
   "name": "momiji",
   "version": "1.0.0",
   "description": "swipe, gesture, gallery",
+  "private": true,
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DenpaGhost/momiji.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
