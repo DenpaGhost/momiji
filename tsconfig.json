@@ -23,6 +23,9 @@
       ]
     }
   },
+  "files": [
+    "~/src/types/vuefile.d.ts"
+  ],
   "exclude": [
     "node_modules"
   ]

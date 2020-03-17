@@ -11,6 +11,14 @@ module.exports = {
         contentBase: path.resolve(__dirname, './static'),
         publicPath: '/'
     },
+    resolve: {
+        extensions: ['.js', '.ts', '.vue', '.css'],
+        alias: {
+            vue$: 'vue/dist/vue.esm.js',
+            '~': path.resolve(__dirname, './'),
+            '@': path.resolve(__dirname, './')
+        }
+    },
     module: {
         rules: [
             {
@@ -38,12 +46,6 @@ module.exports = {
                 }
             }
         ]
-    },
-    resolve: {
-        extensions: ['.js', '.vue', '.ts', '.css'],
-        alias: {
-            vue$: 'vue/dist/vue.esm.js'
-        }
     },
     plugins: [new VueLoaderPlugin()]
 };
