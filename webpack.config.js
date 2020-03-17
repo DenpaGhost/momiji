@@ -14,6 +14,14 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.ts$/,
+                loader: 'ts-loader',
+                exclude: "/node_modules/",
+                options: {
+                    appendTsSuffixTo: [/\.vue$/]
+                }
+            },
+            {
                 test: /\.vue$/,
                 loader: "vue-loader"
             },
@@ -32,7 +40,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.js', '.vue'],
+        extensions: ['.js', '.vue', '.ts', '.css'],
         alias: {
             vue$: 'vue/dist/vue.esm.js'
         }
