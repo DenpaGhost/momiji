@@ -1,9 +1,9 @@
 import Vue from "vue";
-import Example from "./Example";
+import Base from "~/src/components/Base";
+
+Vue.component('v-base', Base);
 
 new Vue({
     el: '#app',
-    components: {
-        Example
-    }
+    template: '<v-base/>'
 });
