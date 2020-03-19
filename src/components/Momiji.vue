@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <img :src="src"
-             alt="windows"
-             @touchstart="dragStart"
-             @touchmove="dragging"
-             @touchend="dragEnd"
-             ref="img"
-             :style="style"
-             class="momiji"/>
+    <div class="momiji"
+         ref="momiji"
+         :style="style"
+         @touchstart="dragStart"
+         @touchmove="dragging"
+         @touchend="dragEnd">
+        <slot/>
     </div>
 </template>
 
@@ -15,39 +13,39 @@
     import {Component, Prop, Vue} from "vue-property-decorator";
 
     @Component
-    export default class MomijiImg extends Vue {
-        @Prop({type: String, required: true})
-        src!: string;
-
+    export default class Momiji extends Vue {
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
         initX = 0;
         initY = 0;
-
-        imgWidth = 0;
-        dx = 0;
-        dy = 0;
+        width = 0;
 
         isDragging = false;
         isAnimating = false;
 
+        dx = 0;
+        dy = 0;
+
         isSnapVertical = false;
         isSnapHorizontal = false;
 
-        get img(): Element {
-            return this.$refs.img as Element;
+        get momiji(): Element {
+            return this.$refs.momiji as Element;
         }
 
         get style() {
             const obj: any = {
                 'position': this.isAnimating ? 'fixed' : 'static',
-                'max-width': this.isAnimating ? `${this.imgWidth}px` : '100%',
                 'transition': `all ${this.isDragging ? 0 : 200}ms ease-out`,
             };
 
             if (this.isDragging) {
                 obj['transform'] = `translate(${this.dx}px, ${this.dy}px)`;
+            }
+
+            if (this.isAnimating) {
+                obj['width'] = `${this.width}px`
             }
 
             return obj;
@@ -61,7 +59,7 @@
                 this.initX = event.touches[0].pageX;
                 this.initY = event.touches[0].pageY;
 
-                this.imgWidth = this.img.getBoundingClientRect().width;
+                this.width = this.momiji.getBoundingClientRect().width;
 
                 this.isDragging = true;
                 this.isAnimating = true;
