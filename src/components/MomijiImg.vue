@@ -43,7 +43,7 @@
             const obj: any = {
                 'position': this.isAnimating ? 'fixed' : 'static',
                 'max-width': this.isAnimating ? `${this.imgWidth}px` : '100%',
-                'transition': `all ${this.isDragging ? 0 : 200}ms linear`,
+                'transition': `all ${this.isDragging ? 0 : 200}ms ease-out`,
             };
 
             if (this.isDragging) {
