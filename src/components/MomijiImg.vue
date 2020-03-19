@@ -19,6 +19,9 @@
         @Prop({type: String, required: true})
         src!: string;
 
+        @Prop({type: Boolean, default: true})
+        snap!: boolean;
+
         initX = 0;
         initY = 0;
 
@@ -28,6 +31,9 @@
 
         isDragging = false;
         isAnimating = false;
+
+        isSnapVertical = false;
+        isSnapHorizontal = false;
 
         get img(): Element {
             return this.$refs.img as Element;
@@ -64,8 +70,30 @@
 
         dragging(event: Event): void {
             if (event instanceof TouchEvent) {
-                this.dx = this.distanceX(event);
-                this.dy = this.distanceY(event);
+                if (this.snap) {
+                    if (!(this.isSnapHorizontal && this.isSnapVertical) && (this.isSnapHorizontal || this.isSnapVertical)) {
+                        if (this.isSnapHorizontal) {
+                            this.dx = this.distanceX(event);
+                        } else {
+                            this.dy = this.distanceY(event);
+                        }
+                    }
+                } else {
+                    this.dx = this.distanceX(event);
+                    this.dy = this.distanceY(event);
+                }
+
+                if (this.snap && !(this.isSnapHorizontal || this.isSnapVertical)) {
+                    if (Math.abs(this.distanceX(event)) > Math.abs(this.distanceY(event))) {
+                        this.isSnapHorizontal = true;
+                        this.dy = this.distanceY(event);
+                        this.dy = 0;
+                    } else {
+                        this.isSnapVertical = true;
+                        this.dx = 0;
+                        this.dy = this.distanceY(event);
+                    }
+                }
             }
         }
 
@@ -77,6 +105,9 @@
 
                 this.wait(200).then(_ => {
                     this.isAnimating = false;
+
+                    this.isSnapVertical = false;
+                    this.isSnapHorizontal = false;
                 });
             }
         }
@@ -84,11 +115,7 @@
         wait(ms: number) {
             return new Promise((resolve) => {
                 setTimeout(resolve, ms);
-            })
-        }
-
-        get now(): number {
-            return performance.now();
+            });
         }
 
         distanceX(event: TouchEvent): number {
@@ -96,7 +123,7 @@
         }
 
         distanceY(event: TouchEvent): number {
-            return event.touches[0].pageY - this.initY
+            return event.touches[0].pageY - this.initY;
         }
     }
 </script>
