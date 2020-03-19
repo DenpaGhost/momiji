@@ -17,6 +17,9 @@
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
+        @Prop({type: Number, default: 10})
+        swipeDistance!: number;
+
         initX = 0;
         initY = 0;
         width = 0;
@@ -97,6 +100,16 @@
 
         dragEnd(event: Event) {
             if (event instanceof TouchEvent) {
+                if (this.dx > this.rem2px(this.swipeDistance)) {
+                    console.log('swipe right');
+                } else if (this.dx < this.rem2px(-this.swipeDistance)) {
+                    console.log('swipe left');
+                } else if (this.dy > this.rem2px(this.swipeDistance)) {
+                    console.log('swipe down');
+                } else if (this.dy < this.rem2px(-this.swipeDistance)) {
+                    console.log('swipe up');
+                }
+
                 this.dx = 0;
                 this.dy = 0;
                 this.isDragging = false;
@@ -122,6 +135,11 @@
 
         distanceY(event: TouchEvent): number {
             return event.touches[0].pageY - this.initY;
+        }
+
+        rem2px(rem: number): number {
+            const font = getComputedStyle(document.documentElement).fontSize;
+            return rem * parseFloat(font);
         }
     }
 </script>
