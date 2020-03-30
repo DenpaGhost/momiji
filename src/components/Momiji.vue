@@ -39,7 +39,7 @@
 
         get style() {
             const obj: any = {
-                'position': this.isAnimating ? 'fixed' : 'static',
+                'position': this.isAnimating ? 'relative' : 'static',
                 'transition': `all ${this.isDragging ? 0 : 200}ms ease-out`,
             };
 
@@ -55,6 +55,11 @@
         }
 
         mounted(): void {
+            console.log(this.snap);
+        }
+
+        handleTouchMove(event: any) {
+            event.preventDefault();
         }
 
         dragStart(event: Event): void {
@@ -63,6 +68,9 @@
                 this.initY = event.touches[0].pageY;
 
                 this.width = this.momiji.getBoundingClientRect().width;
+
+                // スクロール固定
+                document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
 
                 this.isDragging = true;
                 this.isAnimating = true;
@@ -115,8 +123,9 @@
                 this.isDragging = false;
 
                 this.wait(200).then(_ => {
+                    // スクロール固定
+                    document.removeEventListener('touchmove', this.handleTouchMove);
                     this.isAnimating = false;
-
                     this.isSnapVertical = false;
                     this.isSnapHorizontal = false;
                 });
