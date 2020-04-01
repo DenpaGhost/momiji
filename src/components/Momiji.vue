@@ -39,7 +39,7 @@
 
         get style() {
             const obj: any = {
-                'position': this.isAnimating ? 'relative' : 'static',
+                'position': this.isAnimating ? 'relative' : 'relative',
                 'transition': `all ${this.isDragging ? 0 : 200}ms ease-out`,
             };
 
