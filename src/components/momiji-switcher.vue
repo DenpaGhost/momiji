@@ -6,17 +6,17 @@
 
         <div class="momiji-container momiji-previous"
              :style="style">
-            <img :src="previousSrc" class="momiji-img-fluid">
+            <img :src="previousSrc" class="momiji-img-fluid" :alt="previousSrc">
         </div>
 
         <div class="momiji-container"
              :style="style">
-            <img :src="focusSrc" class="momiji-img-fluid">
+            <img :src="focusSrc" class="momiji-img-fluid" :alt="focusSrc">
         </div>
 
         <div class="momiji-container momiji-next"
              :style="style">
-            <img :src="nextSrc" class="momiji-img-fluid">
+            <img :src="nextSrc" class="momiji-img-fluid" :alt="nextSrc">
         </div>
 
     </div>
@@ -31,7 +31,7 @@
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
-        @Prop({type: Number, default: 160})
+        @Prop({type: Number, default: 80})
         sensibility!: number;
 
         @Prop({type: String, required: true})
@@ -54,15 +54,9 @@
         dy: number = 0;
 
         get style() {
-            const x_limit = window.parent.screen.width + 10;
-            const y_limit = window.parent.screen.height;
-
-            const x = this.dx > x_limit ? x_limit : this.dx;
-            const y = this.dy > y_limit ? y_limit : this.dy;
-
             return {
-                transform: `translate(${x}px, ${y}px)`,
-                transition: `transform ${this.isDragging ? '0ms' : '200ms'}`
+                transform: `translate(${this.dx}px, ${this.dy}px)`,
+                transition: `transform ${this.isAnimating ? '200ms' : '0ms'}`
             };
         }
 
@@ -115,37 +109,60 @@
             ) {
                 this.position.event = event;
 
+                document.removeEventListener('touchmove', this.handleTouchMove);
+                this.isDragging = false;
+
+                this.isAnimating = true;
+
                 switch (this.SwipeDirection) {
                     case Direction.left:
                         this.dx = -(window.parent.screen.width + 10);
-                        this.$emit("swipeToLeft");
+                        this.waitForMS(200).then(() => {
+                            this.isAnimating = false;
+                            this.$emit("swipeToLeft");
+
+                            this.dx = 0;
+                            this.dy = 0;
+                        });
                         break;
                     case Direction.right:
                         this.dx = window.parent.screen.width + 10;
-                        this.$emit('swipeToRight');
+                        this.waitForMS(200).then(() => {
+                            this.isAnimating = false;
+                            this.$emit('swipeToRight');
+
+                            this.dx = 0;
+                            this.dy = 0;
+                        });
                         break;
                     case Direction.up:
                         console.log('swipe up');
+                        this.dx = 0;
+                        this.dy = 0;
+                        this.waitForMS(200).then(_ => {
+                            this.isAnimating = false;
+                        });
                         break;
+
                     case Direction.down:
                         console.log('swipe down');
+                        this.dx = 0;
+                        this.dy = 0;
+                        this.waitForMS(200).then(_ => {
+                            this.isAnimating = false;
+                        });
                         break;
-                    default:
 
+                    default:
+                        this.dx = 0;
+                        this.dy = 0;
+                        this.waitForMS(200).then(_ => {
+                            this.isAnimating = false;
+                        });
                 }
 
                 this.isSnapHorizontal = false;
                 this.isSnapVertical = false;
-
-                document.removeEventListener('touchmove', this.handleTouchMove);
-                this.isDragging = false;
-
-                this.waitForMS(1000).then(_ => {
-                    this.isAnimating = false;
-
-                    this.dx = 0;
-                    this.dy = 0;
-                });
             }
         }
 

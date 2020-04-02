@@ -3,6 +3,8 @@
             :next-src="images[next]"
             :focus-src="images[focus]"
             :previous-src="images[previous]"
+            @swipeToLeft="swipeToRight"
+            @swipeToRight="swipeToRight"
     />
 </template>
 
@@ -30,6 +32,15 @@
 
         get previous() {
             return parseInt(this.$route.params.index) == 0 ? 1 : 0;
+        }
+
+        swipeToRight() {
+            this.$router.push({
+                name: 'gallery',
+                params: {
+                    index: `${this.focus == 0 ? 1 : 0}`
+                }
+            });
         }
     }
 </script>
