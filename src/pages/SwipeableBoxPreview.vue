@@ -22,20 +22,20 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import MomijiSwipableBox from "../components/MomijiSwipableBox.vue";
+    import MomijiSwipeableBox from "../components/MomijiSwipeableBox.vue";
 
     @Component({
-        components: {MomijiSwipableBox}
+        components: {MomijiSwipableBox: MomijiSwipeableBox}
     })
-    export default class SwipableBoxPreview extends Vue {
+    export default class SwipeableBoxPreview extends Vue {
 
     }
 </script>
 
 <style scoped>
-.swipable-box{
-    background-color: #000000;
-    height: 100vh;
-    width: 100vw;
-}
+    .swipable-box {
+        background-color: #000000;
+        height: 100vh;
+        width: 100vw;
+    }
 </style>

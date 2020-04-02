@@ -27,7 +27,7 @@
     import MomijiPosition from "~/src/models/MomijiPosition";
 
     @Component
-    export default class MomijiSwipableBox extends Vue {
+    export default class MomijiSwipeableBox extends Vue {
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 

@@ -1,7 +1,7 @@
 import Base from "~/src/components/Base.vue";
 import Gallery from "~/src/pages/Gallery.vue";
 import Preview from "~/src/pages/Preview.vue";
-import SwipableBoxPreview from "~/src/pages/SwipableBoxPreview.vue";
+import SwipeableBoxPreview from "~/src/pages/SwipeableBoxPreview.vue";
 
 export default {
     routes: [
@@ -21,7 +21,7 @@ export default {
         },
         {
             path: '/box-preview',
-            component: SwipableBoxPreview
+            component: SwipeableBoxPreview
         }
     ]
 }
