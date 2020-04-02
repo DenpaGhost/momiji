@@ -106,29 +106,32 @@
             ) {
                 this.position.event = event;
 
-                if (this.dx > this.sensibility) {
-                    console.log('swipe to right');
-                    this.dx = window.parent.screen.width + 10;
-                    this.$emit('swipeToRight');
-                } else if (this.dx < -this.sensibility) {
-                    console.log('swipe to left');
-                    this.dx = -(window.parent.screen.width + 10);
-                    this.$emit("swipeToLeft");
-                } else if (this.dy > this.sensibility) {
-                    console.log('swipe down');
-                } else if (this.dy < -this.sensibility) {
-                    console.log('swipe up');
-                } else {
-                    this.dx = 0;
-                    this.dy = 0;
+                switch (this.SwipeDirection) {
+                    case Direction.left:
+                        this.dx = -(window.parent.screen.width + 10);
+                        this.$emit("swipeToLeft");
+                        break;
+                    case Direction.right:
+                        this.dx = window.parent.screen.width + 10;
+                        this.$emit('swipeToRight');
+                        break;
+                    case Direction.up:
+                        console.log('swipe up');
+                        break;
+                    case Direction.down:
+                        console.log('swipe down');
+                        break;
+                    default:
+
                 }
+
                 this.isSnapHorizontal = false;
                 this.isSnapVertical = false;
 
                 document.removeEventListener('touchmove', this.handleTouchMove);
                 this.isDragging = false;
 
-                this.waitForSecond(1000).then(_ => {
+                this.waitForMS(1000).then(_ => {
                     this.isAnimating = false;
 
                     this.dx = 0;
@@ -137,11 +140,34 @@
             }
         }
 
-        waitForSecond(ms: number): Promise<void> {
+        waitForMS(ms: number): Promise<void> {
             return new Promise((resolve) => {
                 setTimeout(resolve, ms);
             });
         }
+
+        get SwipeDirection(): Direction | null {
+            if (this.dx > this.sensibility) {
+                this.dx = window.parent.screen.width + 10;
+                return Direction.right;
+            } else if (this.dx < -this.sensibility) {
+                this.dx = -(window.parent.screen.width + 10);
+                return Direction.left;
+            } else if (this.dy > this.sensibility) {
+                return Direction.down;
+            } else if (this.dy < -this.sensibility) {
+                return Direction.up;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    enum Direction {
+        left,
+        right,
+        up,
+        down
     }
 </script>
 
