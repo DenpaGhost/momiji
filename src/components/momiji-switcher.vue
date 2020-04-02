@@ -31,6 +31,9 @@
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
+        @Prop({type: Number, default: 320})
+        sensibility!: number;
+
         position!: MomijiPosition;
         isDragging = false;
         isAnimating = false;
@@ -49,7 +52,8 @@
             const y = this.dy > y_limit ? y_limit : this.dy;
 
             return {
-                transform: `translate(${x}px, ${y}px)`
+                transform: `translate(${x}px, ${y}px)`,
+                transition: `transform ${this.isDragging ? '0ms' : '200ms'}`
             };
         }
 
@@ -63,13 +67,9 @@
 
         dragStart(event: Event): void {
             if (event instanceof TouchEvent) {
-                console.log('drag start');
-
                 this.position = new MomijiPosition(event.touches[0].pageX, event.touches[0].pageY);
                 this.position.finger = 0;
-
                 document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
-
                 this.isDragging = true;
             }
         }
@@ -98,24 +98,47 @@
                     this.dx = this.position.distanceX;
                     this.dy = this.position.distanceY;
                 }
-
-                console.log(`${this.dx}, ${this.dy}`);
             }
         }
 
         dragEnd(event: Event): void {
-            if (event instanceof TouchEvent) {
+            if (event instanceof TouchEvent
+            ) {
                 this.position.event = event;
 
-                this.dx = 0;
-                this.dy = 0;
+                if (this.dx > this.sensibility) {
+                    console.log('swipe to right');
+                    this.dx = window.parent.screen.width + 10;
+                } else if (this.dx < -this.sensibility) {
+                    console.log('swipe to left');
+                    this.dx = -(window.parent.screen.width + 10);
+                } else if (this.dy > this.sensibility) {
+                    console.log('swipe down');
+                } else if (this.dy < -this.sensibility) {
+                    console.log('swipe up');
+                } else {
+                    this.dx = 0;
+                    this.dy = 0;
+                }
                 this.isSnapHorizontal = false;
                 this.isSnapVertical = false;
 
+                document.removeEventListener('touchmove', this.handleTouchMove);
                 this.isDragging = false;
 
-                document.removeEventListener('touchmove', this.handleTouchMove);
+                this.waitForSecond(1000).then(_ => {
+                    this.isAnimating = false;
+
+                    this.dx = 0;
+                    this.dy = 0;
+                });
             }
+        }
+
+        waitForSecond(ms: number): Promise<void> {
+            return new Promise((resolve) => {
+                setTimeout(resolve, ms);
+            });
         }
     }
 </script>

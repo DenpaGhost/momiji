@@ -19,7 +19,7 @@
     <!--        </div>-->
     <!--    </div>-->
 
-    <momiji-switcher :snap="false"/>
+    <momiji-switcher :snap="true"/>
 </template>
 
 <script lang="ts">
