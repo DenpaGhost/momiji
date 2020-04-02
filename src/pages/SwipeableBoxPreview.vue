@@ -1,7 +1,8 @@
 <template>
     <momiji class="swipable-box"
             @swipeToLeft="swipe"
-            @swipeToRight="swipe">
+            @swipeToRight="swipe"
+            stop-previous>
         <template v-slot:previous>
             <img :src="images[previous]"
                  alt="前の画像"
