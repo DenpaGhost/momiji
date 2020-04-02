@@ -43,6 +43,14 @@
         @Prop({type: String, required: true})
         previousSrc!: string;
 
+        @Prop({type: Boolean, default: true})
+        hasNext: boolean = true;
+
+        @Prop({type: Boolean, default: true})
+        hasPrevious: boolean = true;
+
+
+
         position!: MomijiPosition;
         isDragging = false;
         isAnimating = false;

@@ -20,7 +20,8 @@ export default {
             component: Base
         },
         {
-            path: '/box-preview',
+            path: '/box-preview/:index',
+            name: 'box-preview',
             component: SwipeableBoxPreview
         }
     ]

@@ -1,20 +1,22 @@
 <template>
-    <momiji-swipable-box class="swipable-box">
+    <momiji-swipable-box class="swipable-box"
+                         @swipeToLeft="swipe"
+                         @swipeToRight="swipe">
         <template v-slot:previous>
-            <img src="/img/windows-xp-bliss-4k-lu.jpg"
-                 alt="windows xp"
+            <img :src="images[previous]"
+                 alt="前の画像"
                  class="img-fluid"/>
         </template>
 
         <template v-slot:focus>
-            <img src="/img/material.png"
-                 alt="material"
+            <img :src="images[focus]"
+                 alt="画像"
                  class="img-fluid"/>
         </template>
 
         <template v-slot:next>
-            <img src="/img/windows-xp-bliss-4k-lu.jpg"
-                 alt="windows xp"
+            <img :src="images[next]"
+                 alt="次の画像"
                  class="img-fluid"/>
         </template>
     </momiji-swipable-box>
@@ -28,7 +30,28 @@
         components: {MomijiSwipableBox: MomijiSwipeableBox}
     })
     export default class SwipeableBoxPreview extends Vue {
+        images: Array<string> = ['/img/windows-xp-bliss-4k-lu.jpg', '/img/material.png'];
 
+        get previous(): number {
+            return parseInt(this.$route.params.index) == 0 ? 1 : 0;
+        }
+
+        get focus(): number {
+            return parseInt(this.$route.params.index);
+        }
+
+        get next(): number {
+            return parseInt(this.$route.params.index) == 0 ? 1 : 0;
+        }
+
+        swipe() {
+            this.$router.push({
+                name: 'box-preview',
+                params: {
+                    index: `${this.focus == 0 ? 1 : 0}`
+                }
+            })
+        }
     }
 </script>
 
