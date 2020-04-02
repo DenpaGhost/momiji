@@ -1,161 +1,215 @@
 <template>
-    <div class="momiji"
-         ref="momiji"
-         :style="style"
+    <div class="momiji-outer"
          @touchstart="dragStart"
          @touchmove="dragging"
          @touchend="dragEnd">
-        <slot/>
+
+        <div class="momiji-container momiji-previous"
+             :style="style">
+            <slot name="previous"/>
+        </div>
+
+        <div class="momiji-container"
+             :style="style">
+            <slot name="focus"/>
+        </div>
+
+        <div class="momiji-container momiji-next"
+             :style="style">
+            <slot name="next"/>
+        </div>
+
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
+    import MomijiPosition from "~/src/models/MomijiPosition";
 
     @Component
-    export default class Momiji extends Vue {
+    export default class MomijiSwipeableBox extends Vue {
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
-        @Prop({type: Number, default: 10})
-        swipeDistance!: number;
+        @Prop({type: Number, default: 80})
+        sensibility!: number;
 
-        initX = 0;
-        initY = 0;
-        width = 0;
-
+        position!: MomijiPosition;
         isDragging = false;
         isAnimating = false;
 
-        dx = 0;
-        dy = 0;
-
-        isSnapVertical = false;
         isSnapHorizontal = false;
+        isSnapVertical = false;
 
-        get momiji(): Element {
-            return this.$refs.momiji as Element;
-        }
+        dx: number = 0;
+        dy: number = 0;
 
         get style() {
-            const obj: any = {
-                'position': this.isAnimating ? 'relative' : 'relative',
-                'transition': `all ${this.isDragging ? 0 : 200}ms ease-out`,
+            return {
+                transform: `translate(${this.dx}px, ${this.dy}px)`,
+                transition: `transform ${this.isAnimating ? '200ms' : '0ms'}`
             };
-
-            if (this.isDragging) {
-                obj['transform'] = `translate(${this.dx}px, ${this.dy}px)`;
-            }
-
-            if (this.isAnimating) {
-                obj['width'] = `${this.width}px`
-            }
-
-            return obj;
         }
 
-        mounted(): void {
-            console.log(this.snap);
+        get wasSetSnap(): boolean {
+            return this.isSnapHorizontal || this.isSnapVertical;
         }
 
-        handleTouchMove(event: any) {
+        handleTouchMove(event: any): void {
             event.preventDefault();
         }
 
         dragStart(event: Event): void {
             if (event instanceof TouchEvent) {
-                this.initX = event.touches[0].pageX;
-                this.initY = event.touches[0].pageY;
-
-                this.width = this.momiji.getBoundingClientRect().width;
-
-                // スクロール固定
+                this.position = new MomijiPosition(event.touches[0].pageX, event.touches[0].pageY);
+                this.position.finger = 0;
                 document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
-
                 this.isDragging = true;
-                this.isAnimating = true;
             }
         }
 
         dragging(event: Event): void {
             if (event instanceof TouchEvent) {
+                this.position.event = event;
+
+                if (this.snap && !this.wasSetSnap) {
+                    if (Math.abs(this.position.distanceX) > Math.abs(this.position.distanceY)) {
+                        this.isSnapHorizontal = true;
+                    } else {
+                        this.isSnapVertical = true;
+                    }
+                }
+
                 if (this.snap) {
-                    if (!(this.isSnapHorizontal && this.isSnapVertical) && (this.isSnapHorizontal || this.isSnapVertical)) {
+                    if (this.wasSetSnap) {
                         if (this.isSnapHorizontal) {
-                            this.dx = this.distanceX(event);
-                        } else {
-                            this.dy = this.distanceY(event);
+                            this.dx = this.position.distanceX;
+                        } else if (this.isSnapVertical) {
+                            this.dy = this.position.distanceY;
                         }
                     }
                 } else {
-                    this.dx = this.distanceX(event);
-                    this.dy = this.distanceY(event);
-                }
-
-                if (this.snap && !(this.isSnapHorizontal || this.isSnapVertical)) {
-                    if (Math.abs(this.distanceX(event)) > Math.abs(this.distanceY(event))) {
-                        this.isSnapHorizontal = true;
-                        this.dy = this.distanceY(event);
-                        this.dy = 0;
-                    } else {
-                        this.isSnapVertical = true;
-                        this.dx = 0;
-                        this.dy = this.distanceY(event);
-                    }
+                    this.dx = this.position.distanceX;
+                    this.dy = this.position.distanceY;
                 }
             }
         }
 
-        dragEnd(event: Event) {
-            if (event instanceof TouchEvent) {
-                if (this.dx > this.rem2px(this.swipeDistance)) {
-                    console.log('swipe right');
-                } else if (this.dx < this.rem2px(-this.swipeDistance)) {
-                    console.log('swipe left');
-                } else if (this.dy > this.rem2px(this.swipeDistance)) {
-                    console.log('swipe down');
-                } else if (this.dy < this.rem2px(-this.swipeDistance)) {
-                    console.log('swipe up');
-                }
+        dragEnd(event: Event): void {
+            if (event instanceof TouchEvent
+            ) {
+                this.position.event = event;
 
-                this.dx = 0;
-                this.dy = 0;
+                document.removeEventListener('touchmove', this.handleTouchMove);
                 this.isDragging = false;
 
-                this.wait(200).then(_ => {
-                    // スクロール固定
-                    document.removeEventListener('touchmove', this.handleTouchMove);
-                    this.isAnimating = false;
-                    this.isSnapVertical = false;
-                    this.isSnapHorizontal = false;
-                });
+                this.isAnimating = true;
+
+                switch (this.SwipeDirection) {
+                    case Direction.left:
+                        this.dx = -(window.parent.screen.width + 10);
+                        this.waitForMS(200).then(() => {
+                            this.isAnimating = false;
+                            this.$emit("swipeToLeft");
+
+                            this.dx = 0;
+                            this.dy = 0;
+                        });
+                        break;
+                    case Direction.right:
+                        this.dx = window.parent.screen.width + 10;
+                        this.waitForMS(200).then(() => {
+                            this.isAnimating = false;
+                            this.$emit('swipeToRight');
+
+                            this.dx = 0;
+                            this.dy = 0;
+                        });
+                        break;
+                    case Direction.up:
+                        console.log('swipe up');
+                        this.dx = 0;
+                        this.dy = 0;
+                        this.waitForMS(200).then(_ => {
+                            this.isAnimating = false;
+                        });
+                        break;
+
+                    case Direction.down:
+                        console.log('swipe down');
+                        this.dx = 0;
+                        this.dy = 0;
+                        this.waitForMS(200).then(_ => {
+                            this.isAnimating = false;
+                        });
+                        break;
+
+                    default:
+                        this.dx = 0;
+                        this.dy = 0;
+                        this.waitForMS(200).then(_ => {
+                            this.isAnimating = false;
+                        });
+                }
+
+                this.isSnapHorizontal = false;
+                this.isSnapVertical = false;
             }
         }
 
-        wait(ms: number) {
+        waitForMS(ms: number): Promise<void> {
             return new Promise((resolve) => {
                 setTimeout(resolve, ms);
             });
         }
 
-        distanceX(event: TouchEvent): number {
-            return event.touches[0].pageX - this.initX;
+        get SwipeDirection(): Direction | null {
+            if (this.dx > this.sensibility) {
+                this.dx = window.parent.screen.width + 10;
+                return Direction.right;
+            } else if (this.dx < -this.sensibility) {
+                this.dx = -(window.parent.screen.width + 10);
+                return Direction.left;
+            } else if (this.dy > this.sensibility) {
+                return Direction.down;
+            } else if (this.dy < -this.sensibility) {
+                return Direction.up;
+            } else {
+                return null;
+            }
         }
+    }
 
-        distanceY(event: TouchEvent): number {
-            return event.touches[0].pageY - this.initY;
-        }
-
-        rem2px(rem: number): number {
-            const font = getComputedStyle(document.documentElement).fontSize;
-            return rem * parseFloat(font);
-        }
+    enum Direction {
+        left,
+        right,
+        up,
+        down
     }
 </script>
 
 <style scoped>
-    .momiji {
-        user-select: none;
-        height: auto;
+    .momiji-outer {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .momiji-container {
+        width: 100%;
+        height: 100%;
+
+        position: absolute;
+        display: flex;
+        align-items: center;
+    }
+
+    .momiji-previous {
+        left: -100vw;
+        margin-left: -10px;
+    }
+
+    .momiji-next {
+        left: 100vw;
+        margin-left: 10px;
     }
 </style>

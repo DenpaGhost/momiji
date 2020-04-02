@@ -1,7 +1,7 @@
 <template>
-    <momiji-swipable-box class="swipable-box"
-                         @swipeToLeft="swipe"
-                         @swipeToRight="swipe">
+    <momiji class="swipable-box"
+            @swipeToLeft="swipe"
+            @swipeToRight="swipe">
         <template v-slot:previous>
             <img :src="images[previous]"
                  alt="前の画像"
@@ -19,15 +19,15 @@
                  alt="次の画像"
                  class="img-fluid"/>
         </template>
-    </momiji-swipable-box>
+    </momiji>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import MomijiSwipeableBox from "../components/MomijiSwipeableBox.vue";
+    import Momiji from "~/src/components/Momiji.vue";
 
     @Component({
-        components: {MomijiSwipableBox: MomijiSwipeableBox}
+        components: {Momiji}
     })
     export default class SwipeableBoxPreview extends Vue {
         images: Array<string> = ['/img/windows-xp-bliss-4k-lu.jpg', '/img/material.png'];

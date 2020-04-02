@@ -2,9 +2,9 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <momiji>
+                <momiji-pinch>
                     <img src="/img/material.png" class="img-fluid">
-                </momiji>
+                </momiji-pinch>
             </div>
         </div>
     </div>
@@ -12,10 +12,10 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import Momiji from "~/src/components/Momiji.vue";
+    import MomijiPinch from "~/src/components/MomijiPinch.vue";
 
     @Component({
-        components: {Momiji}
+        components: {MomijiPinch}
     })
     export default class Preview extends Vue {
 
