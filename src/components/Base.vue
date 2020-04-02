@@ -9,7 +9,7 @@
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
     import Momiji from "./Momiji.vue";
-    import MomijiSwitcher from "~/src/components/momiji-switcher.vue";
+    import MomijiSwitcher from "~/src/components/MomijiSwitcher.vue";
 
     @Component({
         components: {MomijiSwitcher, Momiji: Momiji}
