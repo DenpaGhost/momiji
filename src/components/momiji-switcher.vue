@@ -6,17 +6,17 @@
 
         <div class="momiji-container momiji-previous"
              :style="style">
-            <img src="img/material.png" class="momiji-img-fluid">
+            <img :src="previousSrc" class="momiji-img-fluid">
         </div>
 
         <div class="momiji-container"
              :style="style">
-            <img src="img/windows-xp-bliss-4k-lu.jpg" class="momiji-img-fluid">
+            <img :src="focusSrc" class="momiji-img-fluid">
         </div>
 
         <div class="momiji-container momiji-next"
              :style="style">
-            <img src="img/material.png" class="momiji-img-fluid">
+            <img :src="nextSrc" class="momiji-img-fluid">
         </div>
 
     </div>
@@ -33,6 +33,15 @@
 
         @Prop({type: Number, default: 160})
         sensibility!: number;
+
+        @Prop({type: String, required: true})
+        nextSrc!: string;
+
+        @Prop({type: String, required: true})
+        focusSrc!: string;
+
+        @Prop({type: String, required: true})
+        previousSrc!: string;
 
         position!: MomijiPosition;
         isDragging = false;

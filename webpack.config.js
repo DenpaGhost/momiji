@@ -9,6 +9,7 @@ module.exports = {
         filename: '[name].js'
     },
     devServer: {
+        historyApiFallback: true,
         contentBase: path.resolve(__dirname, './static'),
         publicPath: '/'
     },

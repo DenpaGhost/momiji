@@ -1,5 +1,9 @@
 <template>
-    <momiji-switcher :snap="true"/>
+    <momiji-switcher
+            next-src="/img/material.png"
+            focus-src="/img/windows-xp-bliss-4k-lu.jpg"
+            previous-src="/img/material.png"
+            :snap="true"/>
 </template>
 
 <script lang="ts">
@@ -12,6 +16,7 @@
     })
     export default class Base extends Vue {
         mounted() {
+            console.log('base');
         }
     }
 </script>
