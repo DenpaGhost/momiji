@@ -31,7 +31,7 @@
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
-        @Prop({type: Number, default: 320})
+        @Prop({type: Number, default: 160})
         sensibility!: number;
 
         position!: MomijiPosition;
@@ -109,9 +109,11 @@
                 if (this.dx > this.sensibility) {
                     console.log('swipe to right');
                     this.dx = window.parent.screen.width + 10;
+                    this.$emit('swipeToRight');
                 } else if (this.dx < -this.sensibility) {
                     console.log('swipe to left');
                     this.dx = -(window.parent.screen.width + 10);
+                    this.$emit("swipeToLeft");
                 } else if (this.dy > this.sensibility) {
                     console.log('swipe down');
                 } else if (this.dy < -this.sensibility) {
