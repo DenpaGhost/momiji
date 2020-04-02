@@ -1,21 +1,122 @@
 <template>
-    <div class="momiji-outer">
-        <!--        <img src="img/material.png" class="fluid">-->
-        <!--        <img src="img/windows-xp-bliss-4k-lu.jpg" class="fluid focus">-->
-        <!--        <img src="img/material.png" class="fluid next">-->
+    <div class="momiji-outer"
+         @touchstart="dragStart"
+         @touchmove="dragging"
+         @touchend="dragEnd">
 
-        <div class="momiji-container">
+        <div class="momiji-container momiji-previous"
+             :style="style">
+            <img src="img/material.png" class="momiji-img-fluid">
+        </div>
+
+        <div class="momiji-container"
+             :style="style">
             <img src="img/windows-xp-bliss-4k-lu.jpg" class="momiji-img-fluid">
         </div>
+
+        <div class="momiji-container momiji-next"
+             :style="style">
+            <img src="img/material.png" class="momiji-img-fluid">
+        </div>
+
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import MomijiPosition from "~/src/models/MomijiPosition";
 
     @Component
     export default class MomijiSwitcher extends Vue {
+        @Prop({type: Boolean, default: true})
+        snap!: boolean;
 
+        position!: MomijiPosition;
+        isDragging = false;
+        isAnimating = false;
+
+        isSnapHorizontal = false;
+        isSnapVertical = false;
+
+        dx: number = 0;
+        dy: number = 0;
+
+        get style() {
+            const x_limit = window.parent.screen.width + 10;
+            const y_limit = window.parent.screen.height;
+
+            const x = this.dx > x_limit ? x_limit : this.dx;
+            const y = this.dy > y_limit ? y_limit : this.dy;
+
+            return {
+                transform: `translate(${x}px, ${y}px)`
+            };
+        }
+
+        get wasSetSnap(): boolean {
+            return this.isSnapHorizontal || this.isSnapVertical;
+        }
+
+        handleTouchMove(event: any): void {
+            event.preventDefault();
+        }
+
+        dragStart(event: Event): void {
+            if (event instanceof TouchEvent) {
+                console.log('drag start');
+
+                this.position = new MomijiPosition(event.touches[0].pageX, event.touches[0].pageY);
+                this.position.finger = 0;
+
+                document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
+
+                this.isDragging = true;
+            }
+        }
+
+        dragging(event: Event): void {
+            if (event instanceof TouchEvent) {
+                this.position.event = event;
+
+                if (this.snap && !this.wasSetSnap) {
+                    if (Math.abs(this.position.distanceX) > Math.abs(this.position.distanceY)) {
+                        this.isSnapHorizontal = true;
+                    } else {
+                        this.isSnapVertical = true;
+                    }
+                }
+
+                if (this.snap) {
+                    if (this.wasSetSnap) {
+                        if (this.isSnapHorizontal) {
+                            this.dx = this.position.distanceX;
+                        } else if (this.isSnapVertical) {
+                            this.dy = this.position.distanceY;
+                        }
+                    }
+                } else {
+                    this.dx = this.position.distanceX;
+                    this.dy = this.position.distanceY;
+                }
+
+                console.log(`${this.dx}, ${this.dy}`);
+            }
+        }
+
+        dragEnd(event: Event): void {
+            if (event instanceof TouchEvent) {
+                this.position.event = event;
+
+                this.dx = 0;
+                this.dy = 0;
+                this.isSnapHorizontal = false;
+                this.isSnapVertical = false;
+
+                this.isDragging = false;
+
+                document.removeEventListener('touchmove', this.handleTouchMove);
+            }
+        }
     }
 </script>
 
@@ -25,7 +126,7 @@
         width: 100vw;
         background-color: #212121;
 
-        overflow: scroll;
+        overflow: hidden;
         position: relative;
     }
 
@@ -33,6 +134,7 @@
         width: 100%;
         height: 100%;
 
+        position: absolute;
         display: flex;
         align-items: center;
     }
@@ -42,5 +144,15 @@
         max-height: 100%;
         width: auto;
         height: auto;
+    }
+
+    .momiji-previous {
+        left: -100vw;
+        margin-left: -10px;
+    }
+
+    .momiji-next {
+        left: 100vw;
+        margin-left: 10px;
     }
 </style>
