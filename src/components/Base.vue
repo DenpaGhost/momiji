@@ -1,24 +1,4 @@
 <template>
-    <!--    <div class="container-fluid">-->
-    <!--        <div class="row">-->
-    <!--            <div class="col-12">-->
-    <!--                <h3>Momiji</h3>-->
-    <!--                <h3 class="mt-3">snap true</h3>-->
-    <!--                <momiji :snap="true">-->
-    <!--                    <img src="img/windows-xp-bliss-4k-lu.jpg" class="img-fluid">-->
-    <!--                </momiji>-->
-
-    <!--                <h3 class="mt-3">snap false</h3>-->
-    <!--                <momiji :snap="false">-->
-    <!--                    <img src="img/windows-xp-bliss-4k-lu.jpg" class="img-fluid">-->
-    <!--                </momiji>-->
-
-    <!--                -->
-
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-
     <momiji-switcher :snap="true"/>
 </template>
 
