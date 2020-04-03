@@ -4,6 +4,28 @@
          @touchmove="dragging"
          @touchend="dragEnd">
 
+        <div v-if="!stopPrevious"
+             class="momiji-navigation-container momiji-navigation-container-left">
+            <div class="momiji-navigation momiji-navigation-left">
+                <div class="momiji-navigation-icon momiji-navigation-icon-left" @click="swipeToRight">
+                    <div class="momiji-icon-frame">
+                        <img src="/img/less-than-solid.svg" alt="previous">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="!stopNext"
+             class="momiji-navigation-container momiji-navigation-container-right">
+            <div class="momiji-navigation momiji-navigation-right">
+                <div class="momiji-navigation-icon momiji-navigation-icon-right" @click="swipeToLeft">
+                    <div class="momiji-icon-frame">
+                        <img src="/img/greater-than-solid.svg" alt="next">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="momiji-container momiji-previous"
              v-if="!stopPrevious"
              :style="style">
@@ -75,6 +97,9 @@
         resetPosition() {
             this.dx = 0;
             this.dy = 0;
+
+            this.isSnapHorizontal = false;
+            this.isSnapVertical = false;
         }
 
         /**
@@ -226,10 +251,8 @@
          */
         get SwipeDirection(): Direction | null {
             if (this.dx > this.sensibility && !this.stopPrevious) {
-                this.dx = window.parent.screen.width + 10;
                 return Direction.right;
             } else if (this.dx < -this.sensibility && !this.stopNext) {
-                this.dx = -(window.parent.screen.width + 10);
                 return Direction.left;
             } else if (this.dy > this.sensibility) {
                 return Direction.down;
@@ -238,6 +261,10 @@
             } else {
                 return null;
             }
+        }
+
+        test() {
+            console.log('click!');
         }
     }
 
@@ -275,5 +302,87 @@
     .momiji-next {
         left: 100vw;
         margin-left: 10px;
+    }
+
+    /*
+       navigations
+     */
+
+    .momiji-navigation-container {
+        position: absolute;
+        height: 100%;
+        width: 10rem;
+        overflow: hidden;
+    }
+
+    .momiji-navigation-container-right {
+        right: 0;
+    }
+
+    .momiji-navigation-container-left {
+        left: 0;
+    }
+
+    .momiji-navigation {
+        position: absolute;
+        height: 100%;
+        width: 20rem;
+        z-index: 5;
+
+        /*background-color: rgba(127, 127, 127, 0.7);*/
+        transition: transform 200ms ease-in-out;
+    }
+
+    .momiji-navigation-right {
+        right: -10rem;
+    }
+
+    .momiji-navigation-right:hover {
+        transform: translate(-10rem, 0);
+    }
+
+    .momiji-navigation-left {
+        left: -10rem;
+    }
+
+    .momiji-navigation-left:hover {
+        transform: translate(10rem, 0);
+    }
+
+    .momiji-navigation-icon {
+        position: absolute;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 10rem;
+    }
+
+    .momiji-icon-frame {
+        width: 3rem;
+        height: 3rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 1.5rem;
+
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .momiji-icon-frame > img {
+        padding: 0.5rem;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        user-select: none;
+    }
+
+    .momiji-navigation-icon-right {
+        right: 0;
     }
 </style>
