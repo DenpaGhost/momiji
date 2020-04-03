@@ -14,7 +14,7 @@
                 <div class="momiji-navigation-icon momiji-navigation-icon-left"
                      @touchstart.prevent
                      @click="swipeToRight">
-                    <div class="momiji-icon-frame">
+                    <div class="momiji-icon-frame momiji-icon-frame-left">
                         <img src="/img/less-than-solid.svg" alt="previous">
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                 <div class="momiji-navigation-icon momiji-navigation-icon-right"
                      @touchstart.prevent
                      @click="swipeToLeft">
-                    <div class="momiji-icon-frame">
+                    <div class="momiji-icon-frame momiji-icon-frame-right">
                         <img src="/img/greater-than-solid.svg" alt="next">
                     </div>
                 </div>
@@ -395,6 +395,14 @@
         width: auto;
         height: auto;
         user-select: none;
+    }
+
+    .momiji-icon-frame-right {
+        margin-left: 5rem;
+    }
+
+    .momiji-icon-frame-left {
+        margin-right: 5rem;
     }
 
     .momiji-navigation-icon-right {
