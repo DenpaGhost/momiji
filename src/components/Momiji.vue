@@ -6,8 +6,14 @@
 
         <div v-if="!stopPrevious"
              class="momiji-navigation-container momiji-navigation-container-left">
-            <div class="momiji-navigation momiji-navigation-left">
-                <div class="momiji-navigation-icon momiji-navigation-icon-left" @click="swipeToRight">
+            <div class="momiji-navigation momiji-navigation-left"
+                 :class="{'momiji-navigation-left-hover': isShowLeftNavigation}"
+                 @touchstart.prevent
+                 @mouseenter="isShowLeftNavigation = true"
+                 @mouseleave="isShowLeftNavigation = false">
+                <div class="momiji-navigation-icon momiji-navigation-icon-left"
+                     @touchstart.prevent
+                     @click="swipeToRight">
                     <div class="momiji-icon-frame">
                         <img src="/img/less-than-solid.svg" alt="previous">
                     </div>
@@ -17,8 +23,14 @@
 
         <div v-if="!stopNext"
              class="momiji-navigation-container momiji-navigation-container-right">
-            <div class="momiji-navigation momiji-navigation-right">
-                <div class="momiji-navigation-icon momiji-navigation-icon-right" @click="swipeToLeft">
+            <div class="momiji-navigation momiji-navigation-right"
+                 :class="{'momiji-navigation-right-hover': isShowRightNavigation}"
+                 @touchstart.prevent
+                 @mouseenter="isShowRightNavigation = true"
+                 @mouseleave="isShowRightNavigation = false">
+                <div class="momiji-navigation-icon momiji-navigation-icon-right"
+                     @touchstart.prevent
+                     @click="swipeToLeft">
                     <div class="momiji-icon-frame">
                         <img src="/img/greater-than-solid.svg" alt="next">
                     </div>
@@ -51,7 +63,7 @@
     import MomijiPosition from "~/src/models/MomijiPosition";
 
     @Component
-    export default class MomijiSwipeableBox extends Vue {
+    export default class Momiji extends Vue {
         @Prop({type: Boolean, default: true})
         snap!: boolean;
 
@@ -73,6 +85,9 @@
 
         dx: number = 0;
         dy: number = 0;
+
+        isShowRightNavigation: boolean = false;
+        isShowLeftNavigation: boolean = false;
 
         /**
          * 要素を動かすスタイルシート
@@ -200,13 +215,13 @@
          * 左へスワイプするアニメーションを再生
          */
         async swipeToLeft() {
-            this.dx = -(window.parent.screen.width + 10);
+            this.dx = -(window.innerWidth + 10);
 
             this.isAnimating = true;
             await this.waitForMS(200);
             this.isAnimating = false;
-            this.$emit("swipeToLeft");
 
+            this.$emit("swipeToLeft");
             this.resetPosition();
         }
 
@@ -214,13 +229,13 @@
          * 右へスワイプするアニメーションを再生
          */
         async swipeToRight() {
-            this.dx = window.parent.screen.width + 10;
+            this.dx = window.innerWidth + 10;
 
             this.isAnimating = true;
             await this.waitForMS(200);
             this.isAnimating = false;
-            this.$emit('swipeToRight');
 
+            this.$emit('swipeToRight');
             this.resetPosition();
         }
 
@@ -337,7 +352,7 @@
         right: -10rem;
     }
 
-    .momiji-navigation-right:hover {
+    .momiji-navigation-right-hover {
         transform: translate(-10rem, 0);
     }
 
@@ -345,7 +360,7 @@
         left: -10rem;
     }
 
-    .momiji-navigation-left:hover {
+    .momiji-navigation-left-hover {
         transform: translate(10rem, 0);
     }
 
