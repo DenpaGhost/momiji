@@ -64,9 +64,6 @@
 
     @Component
     export default class Momiji extends Vue {
-        @Prop({type: Boolean, default: true})
-        snap!: boolean;
-
         @Prop({type: Number, default: 120})
         sensibility!: number;
 
@@ -75,6 +72,12 @@
 
         @Prop({type: Boolean, default: false})
         stopPrevious!: boolean;
+
+        @Prop({type: Boolean, default: false})
+        disableHorizontal!: boolean;
+
+        @Prop({type: Boolean, default: false})
+        disableVertical!: boolean;
 
         position!: MomijiPosition;
         isDragging = false;
@@ -147,7 +150,7 @@
                 this.position.event = event;
 
                 // スナップ設定
-                if (this.snap && !this.wasSetSnap) {
+                if (!this.wasSetSnap) {
                     if (Math.abs(this.position.distanceX) > Math.abs(this.position.distanceY)) {
                         this.isSnapHorizontal = true;
                     } else {
@@ -156,18 +159,14 @@
                 }
 
                 // 座標移動
-                if (this.snap) {
-                    if (this.wasSetSnap) {
-                        if (this.isSnapHorizontal) {
-                            this.dx = this.position.distanceX;
-                        } else if (this.isSnapVertical) {
-                            this.dy = this.position.distanceY;
-                        }
+                if (this.wasSetSnap) {
+                    if (this.isSnapHorizontal) {
+                        this.dx = this.position.distanceX;
+                    } else if (this.isSnapVertical) {
+                        this.dy = this.position.distanceY;
                     }
-                } else {
-                    this.dx = this.position.distanceX;
-                    this.dy = this.position.distanceY;
                 }
+
             }
         }
 
@@ -281,7 +280,7 @@
         test() {
             console.log('click!');
         }
-    }
+    };
 
     /**
      * スワイプ方向Enum
