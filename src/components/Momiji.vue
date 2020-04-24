@@ -67,6 +67,9 @@
         @Prop({type: Number, default: 120})
         sensibility!: number;
 
+        @Prop({type: Number, default: 10})
+        swipeStartDistance!: number;
+
         @Prop({type: Boolean, default: false})
         stopNext!: boolean;
 
@@ -138,6 +141,12 @@
                 this.position.finger = 0;
                 document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
                 this.isDragging = true;
+
+                if (this.disableHorizontal && !this.disableVertical) {
+                    this.isSnapVertical = true;
+                } else if (!this.disableHorizontal && this.disableVertical) {
+                    this.isSnapHorizontal = true;
+                }
             }
         }
 
@@ -150,7 +159,8 @@
                 this.position.event = event;
 
                 // スナップ設定
-                if (!this.wasSetSnap) {
+                if ((Math.abs(this.position.distanceX) > this.swipeStartDistance || Math.abs(this.position.distanceY) > this.swipeStartDistance)
+                    && !this.wasSetSnap) {
                     if (Math.abs(this.position.distanceX) > Math.abs(this.position.distanceY)) {
                         this.isSnapHorizontal = true;
                     } else {
@@ -166,7 +176,6 @@
                         this.dy = this.position.distanceY;
                     }
                 }
-
             }
         }
 
@@ -275,10 +284,6 @@
             } else {
                 return null;
             }
-        }
-
-        test() {
-            console.log('click!');
         }
     };
 
