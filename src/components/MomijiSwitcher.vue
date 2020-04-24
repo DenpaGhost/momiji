@@ -1,20 +1,20 @@
 <template>
-    <div class="momiji-outer"
+    <div class="momiji-switcher-outer"
          @touchstart="dragStart"
          @touchmove="dragging"
          @touchend="dragEnd">
 
         <div v-if="!stopPrevious"
-             class="momiji-navigation-container momiji-navigation-container-left">
-            <div class="momiji-navigation momiji-navigation-left"
-                 :class="{'momiji-navigation-left-hover': isShowLeftNavigation}"
+             class="momiji-switcher-navigation-container momiji-switcher-navigation-container-left">
+            <div class="momiji-switcher-navigation momiji-switcher-navigation-left"
+                 :class="{'momiji-switcher-navigation-left-hover': isShowLeftNavigation}"
                  @touchstart.prevent
                  @mouseenter="isShowLeftNavigation = true"
                  @mouseleave="isShowLeftNavigation = false">
-                <div class="momiji-navigation-icon momiji-navigation-icon-left"
+                <div class="momiji-switcher-navigation-icon momiji-navigation-icon-left"
                      @touchstart.prevent
                      @click="swipeToRight">
-                    <div class="momiji-icon-frame momiji-icon-frame-left">
+                    <div class="momiji-switcher-icon-frame momiji-switcher-icon-frame-left">
                         <img src="/img/less-than-solid.svg" alt="previous">
                     </div>
                 </div>
@@ -22,34 +22,34 @@
         </div>
 
         <div v-if="!stopNext"
-             class="momiji-navigation-container momiji-navigation-container-right">
-            <div class="momiji-navigation momiji-navigation-right"
-                 :class="{'momiji-navigation-right-hover': isShowRightNavigation}"
+             class="momiji-switcher-navigation-container momiji-switcher-navigation-container-right">
+            <div class="momiji-switcher-navigation momiji-switcher-navigation-right"
+                 :class="{'momiji-switcher-navigation-right-hover': isShowRightNavigation}"
                  @touchstart.prevent
                  @mouseenter="isShowRightNavigation = true"
                  @mouseleave="isShowRightNavigation = false">
-                <div class="momiji-navigation-icon momiji-navigation-icon-right"
+                <div class="momiji-switcher-navigation-icon momiji-switcher-navigation-icon-right"
                      @touchstart.prevent
                      @click="swipeToLeft">
-                    <div class="momiji-icon-frame momiji-icon-frame-right">
+                    <div class="momiji-switcher-icon-frame momiji-switcher-icon-frame-right">
                         <img src="/img/greater-than-solid.svg" alt="next">
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="momiji-container momiji-previous"
+        <div class="momiji-switcher-container momiji-switcher-previous"
              v-if="!stopPrevious"
              :style="style">
             <slot name="previous"/>
         </div>
 
-        <div class="momiji-container"
+        <div class="momiji-switcher-container"
              :style="style">
             <slot name="focus"/>
         </div>
 
-        <div class="momiji-container momiji-next"
+        <div class="momiji-switcher-container momiji-switcher-next"
              v-if="!stopNext"
              :style="style">
             <slot name="next"/>
@@ -299,12 +299,12 @@
 </script>
 
 <style scoped>
-    .momiji-outer {
+    .momiji-switcher-outer {
         overflow: hidden;
         position: relative;
     }
 
-    .momiji-container {
+    .momiji-switcher-container {
         width: 100%;
         height: 100%;
 
@@ -313,12 +313,12 @@
         align-items: center;
     }
 
-    .momiji-previous {
+    .momiji-switcher-previous {
         left: -100vw;
         margin-left: -10px;
     }
 
-    .momiji-next {
+    .momiji-switcher-next {
         left: 100vw;
         margin-left: 10px;
     }
@@ -327,22 +327,22 @@
        navigations
      */
 
-    .momiji-navigation-container {
+    .momiji-switcher-navigation-container {
         position: absolute;
         height: 100%;
         width: 10rem;
         overflow: hidden;
     }
 
-    .momiji-navigation-container-right {
+    .momiji-switcher-navigation-container-right {
         right: 0;
     }
 
-    .momiji-navigation-container-left {
+    .momiji-switcher-navigation-container-left {
         left: 0;
     }
 
-    .momiji-navigation {
+    .momiji-switcher-navigation {
         position: absolute;
         height: 100%;
         width: 20rem;
@@ -352,23 +352,23 @@
         transition: transform 200ms ease-in-out;
     }
 
-    .momiji-navigation-right {
+    .momiji-switcher-navigation-right {
         right: -10rem;
     }
 
-    .momiji-navigation-right-hover {
+    .momiji-switcher-navigation-right-hover {
         transform: translate(-10rem, 0);
     }
 
-    .momiji-navigation-left {
+    .momiji-switcher-navigation-left {
         left: -10rem;
     }
 
-    .momiji-navigation-left-hover {
+    .momiji-switcher-navigation-left-hover {
         transform: translate(10rem, 0);
     }
 
-    .momiji-navigation-icon {
+    .momiji-switcher-navigation-icon {
         position: absolute;
 
         display: flex;
@@ -378,7 +378,7 @@
         width: 10rem;
     }
 
-    .momiji-icon-frame {
+    .momiji-switcher-icon-frame {
         width: 3rem;
         height: 3rem;
 
@@ -392,7 +392,7 @@
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
 
-    .momiji-icon-frame > img {
+    .momiji-switcher-icon-frame > img {
         padding: 0.5rem;
         max-width: 100%;
         max-height: 100%;
@@ -401,15 +401,15 @@
         user-select: none;
     }
 
-    .momiji-icon-frame-right {
+    .momiji-switcher-icon-frame-right {
         margin-left: 5rem;
     }
 
-    .momiji-icon-frame-left {
+    .momiji-switcher-icon-frame-left {
         margin-right: 5rem;
     }
 
-    .momiji-navigation-icon-right {
+    .momiji-switcher-navigation-icon-right {
         right: 0;
     }
 </style>
