@@ -2,9 +2,12 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <momiji-magnifier>
+                <momiji-magnifier @zoomed="handleZoomed">
                     <img src="/img/material.png" alt="material" class="img-fluid"/>
                 </momiji-magnifier>
+            </div>
+            <div class="col-12">
+                {{magnificationRate}}
             </div>
         </div>
     </div>
@@ -18,6 +21,11 @@
         components: {MomijiMagnifier}
     })
     export default class Preview extends Vue {
+        magnificationRate: number = 0;
+
+        handleZoomed(event: any) {
+            this.magnificationRate = event!;
+        }
 
     }
 </script>

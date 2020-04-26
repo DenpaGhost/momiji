@@ -17,11 +17,12 @@
     export default class MomijiMagnifier extends Vue {
         isPinching = false;
         baseDistance: number = 0;
-        magnificationRate: number = 1;
+        baseMagnificationRate: number = 1;
+        currentMagnificationRate: number = 1;
 
         get style() {
             return {
-                transform: `scale(${this.magnificationRate})`
+                transform: `scale(${this.baseMagnificationRate + (this.currentMagnificationRate - 1)})`
             }
         }
 
@@ -48,16 +49,22 @@
                     new MomijiPoint(event.touches[0]),
                     new MomijiPoint(event.touches[1])
                 ).distance;
+                this.currentMagnificationRate = distance / this.baseDistance;
 
-                this.magnificationRate = distance / this.baseDistance;
-                console.log(`拡大率 : ${this.magnificationRate * 100}`);
+                console.log(this.currentMagnificationRate);
+                // console.log(`拡大率 : ${(this.baseMagnificationRate + (this.currentMagnificationRate - 1)) * 100}`);
+
+                this.$emit('zoomed', this.baseMagnificationRate + (this.currentMagnificationRate - 1));
             }
         }
 
         dragEnd(event: Event): void {
-            if (event instanceof TouchEvent && event.touches.length <= 0) {
+            if (event instanceof TouchEvent && event.touches.length < 2) {
                 console.log("指が全部離れた");
                 document.removeEventListener('touchmove', this.handleTouchMove);
+
+                this.baseMagnificationRate += this.currentMagnificationRate - 1;
+                this.currentMagnificationRate = 1;
 
                 this.isPinching = false;
             }
