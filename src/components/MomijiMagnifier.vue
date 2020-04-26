@@ -21,12 +21,14 @@
 
         isPinching = false;
         baseDistance: number = 0;
+        baseCenterPoint: MomijiPoint | null = null;
         baseMagnificationRate: number = 1;
         currentMagnificationRate: number = 1;
+        translate2d: MomijiPoint = new MomijiPoint(0, 0);
 
         get style() {
             return {
-                transform: `scale(${this.currentMagnificationRate})`
+                transform: `translate(${this.translate2d.x}px, ${this.translate2d.y}px) scale(${this.currentMagnificationRate})`
             }
         }
 
@@ -48,10 +50,13 @@
             if (event instanceof TouchEvent && event.touches.length == 2) {
                 document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
 
-                this.baseDistance = new MomijiDistance(
+                const md = new MomijiDistance(
                     new MomijiPoint(event.touches[0]),
                     new MomijiPoint(event.touches[1])
-                ).distance;
+                );
+
+                this.baseDistance = md.distance;
+                this.baseCenterPoint = md.centerPoint;
 
                 this.isPinching = true;
             }
@@ -59,13 +64,16 @@
 
         dragging(event: Event): void {
             if (event instanceof TouchEvent && event.touches.length == 2) {
-                const distance = new MomijiDistance(
+                const md = new MomijiDistance(
                     new MomijiPoint(event.touches[0]),
                     new MomijiPoint(event.touches[1])
-                ).distance;
+                );
+                const distance = md.distance;
 
                 this.setMagnificationRate((distance / this.baseDistance) * this.baseMagnificationRate);
                 console.log(this.currentMagnificationRate);
+
+                this.translate2d = md.centerPoint.getDiff(this.baseCenterPoint!);
 
                 this.$emit('zoomed', this.currentMagnificationRate);
             }

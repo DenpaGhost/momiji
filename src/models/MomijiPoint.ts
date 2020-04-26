@@ -13,4 +13,11 @@ export default class MomijiPoint {
             this.y = y || 0;
         }
     }
+
+    getDiff(point: MomijiPoint): MomijiPoint {
+        return new MomijiPoint(
+            this.x - point.x,
+            this.y - point.y
+        );
+    }
 };

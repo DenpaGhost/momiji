@@ -14,4 +14,11 @@ export default class MomijiDistance {
             (this.point1.x - this.point2.x) ** 2 + (this.point1.y - this.point2.y) ** 2
         );
     }
+
+    get centerPoint(): MomijiPoint {
+        return new MomijiPoint(
+            (this.point1.x + this.point2.x) / 2,
+            (this.point1.y + this.point2.y) / 2
+        );
+    }
 };
