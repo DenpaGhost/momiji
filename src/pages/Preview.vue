@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <momiji-magnifier @zoomed="handleZoomed">
+                <momiji-magnifier @zoomed="handleZoomed" overflow-hidden>
                     <img src="/img/material.png" alt="material" class="img-fluid"/>
                 </momiji-magnifier>
             </div>
