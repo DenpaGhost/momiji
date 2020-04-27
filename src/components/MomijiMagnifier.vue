@@ -3,7 +3,7 @@
          @touchmove="dragging"
          @touchend="dragEnd"
          :class="{'momiji-mag-overflow-hidden': overflowHidden}">
-        <div :style="style">
+        <div :style="style" ref="momiji-mag-frame">
             <slot/>
         </div>
     </div>
@@ -25,6 +25,8 @@
         baseMagnificationRate: number = 1;
         currentMagnificationRate: number = 1;
         translate2d: MomijiPoint = new MomijiPoint(0, 0);
+
+        domRect: DOMRect | null = null;
 
         get style() {
             return {
@@ -87,7 +89,22 @@
                 this.baseMagnificationRate = this.currentMagnificationRate;
 
                 this.isPinching = false;
+
+                console.log(this.frameWidth);
+                console.log(this.frameHeight);
             }
+        }
+
+        get frame(): Element {
+            return this.$refs['momiji-mag-frame'] as Element;
+        }
+
+        get frameWidth(): number {
+            return this.domRect?.width ?? 0;
+        }
+
+        get frameHeight(): number {
+            return this.domRect?.height ?? 0;
         }
     }
 </script>
