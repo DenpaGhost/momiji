@@ -42,6 +42,7 @@
         dragStart(event: Event): void {
             if (event instanceof TouchEvent) {
                 if (!this.isPreventing) {
+                    this.isPreventing = true;
                     document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
                 }
 
@@ -93,17 +94,18 @@
 
         dragEnd(event: Event): void {
             if (event instanceof TouchEvent) {
-                if (!!this.swipe) {
-                    this.swipe.end(this.translateLimit());
-                }
-
                 if (event.touches.length <= 0) {
                     if (this.isPinching && !!this.pinch) {
                         this.pinch.end(1, 4);
                         this.isPinching = false;
                     }
 
+                    if (!!this.swipe) {
+                        this.swipe.end(this.translateLimit());
+                    }
+
                     if (this.isPreventing) {
+                        this.isPreventing = false;
                         document.removeEventListener('touchmove', this.handleTouchMove);
                     }
                 }
