@@ -2,9 +2,9 @@
     <div @touchstart="dragStart"
          @touchmove="dragging"
          @touchend="dragEnd"
-         ref="viewport"
+         ref="momiji-mag-viewport"
          :class="{'momiji-mag-overflow-hidden': overflowHidden}">
-        <div :style="style" ref="momiji-mag-frame">
+        <div :style="style" ref="momiji-mag-canvas">
             <slot/>
         </div>
     </div>
@@ -14,20 +14,20 @@
     import {Component, Prop, Vue} from "vue-property-decorator";
     import MomijiPinching from "~/src/models/fingers/MomijiPinching";
     import Momiji2D from "~/src/models/Momiji2D";
+    import MomijiSwiping from "~/src/models/fingers/MomijiSwiping";
 
     @Component
     export default class MomijiMagnifier extends Vue {
         @Prop({type: Boolean, default: false})
         overflowHidden!: boolean;
 
-        isPinching = false;
+        pinch?: MomijiPinching;
+        swipe?: MomijiSwiping;
         translate2d: Momiji2D = new Momiji2D(0, 0);
         magnificationRate: number = 1
 
-        domRect: DOMRect | null = null;
-
-        // refactor
-        pinch!: MomijiPinching;
+        isPinching = false;
+        isPreventing = false;
 
         get style() {
             return {
@@ -40,47 +40,98 @@
         }
 
         dragStart(event: Event): void {
-            if (event instanceof TouchEvent && event.touches.length == 2) {
-                document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
-
-                if (!this.pinch) {
-                    this.pinch = MomijiPinching.start(event.touches[0], event.touches[1]);
-                } else {
-                    this.pinch.start(event.touches[0], event.touches[1]);
+            if (event instanceof TouchEvent) {
+                if (!this.isPreventing) {
+                    document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
                 }
 
-                console.log("指が触れた")
-                console.log(this.pinch);
-                console.log(this.pinch.scale() / this.pinch.scaleWeight);
-                console.log(Momiji2D.diff(this.pinch.translate2D(), this.pinch.translateWeight));
+                if (event.touches.length == 1) {
+                    if (!this.swipe) {
+                        this.swipe = MomijiSwiping.start(event.touches[0]);
+                    } else {
+                        this.swipe.start(event.touches[0]);
+                    }
+                } else if (event.touches.length == 2) {
+                    if (!this.pinch) {
+                        this.pinch = MomijiPinching.start(event.touches[0], event.touches[1]);
+                    } else {
+                        this.pinch.start(event.touches[0], event.touches[1]);
+                    }
 
-                this.isPinching = true;
+                    if (!this.swipe) {
+                        this.swipe = MomijiSwiping.start(this.pinch.initPair.centerPoint);
+                    } else {
+                        this.swipe.start(this.pinch.initPair.centerPoint);
+                    }
+
+                    this.isPinching = true;
+                }
             }
         }
 
         dragging(event: Event): void {
-            if (event instanceof TouchEvent && event.touches.length == 2) {
-                this.pinch.move(event.touches[0], event.touches[1])
+            if (event instanceof TouchEvent) {
+                if (event.touches.length == 1) {
+                    if (!!this.swipe) {
+                        this.translate2d = this.swipe.move(event.touches[0]).translate2D(this.translateLimit());
+                    }
+                } else if (event.touches.length == 2) {
+                    if (!!this.pinch) {
+                        this.pinch.move(event.touches[0], event.touches[1])
+                        this.magnificationRate = this.pinch.scale(1, 4);
 
-                this.magnificationRate = this.pinch.scale(1, 4);
-                this.translate2d = this.pinch.translate2D();
+                        if (!!this.swipe) {
+                            this.translate2d =
+                                this.swipe.move(this.pinch.movingPair.centerPoint).translate2D(this.translateLimit());
+                        }
+                    }
 
-                this.$emit('zoomed', this.magnificationRate);
+                    this.$emit('zoomed', this.magnificationRate);
+                }
             }
         }
 
         dragEnd(event: Event): void {
-            if (event instanceof TouchEvent && event.touches.length <= 0) {
-                document.removeEventListener('touchmove', this.handleTouchMove);
+            if (event instanceof TouchEvent) {
+                if (!!this.swipe) {
+                    this.swipe.end(this.translateLimit());
+                }
 
-                this.pinch.end();
-                this.isPinching = false;
+                if (event.touches.length <= 0) {
+                    if (this.isPinching && !!this.pinch) {
+                        this.pinch.end(1, 4);
+                        this.isPinching = false;
+                    }
 
-                console.log("指が全部離れた");
-                console.log(this.pinch);
-                console.log(this.pinch.scale() / this.pinch.scaleWeight);
-                console.log(Momiji2D.diff(this.pinch.translate2D(), this.pinch.translateWeight));
+                    if (this.isPreventing) {
+                        document.removeEventListener('touchmove', this.handleTouchMove);
+                    }
+                }
             }
+        }
+
+        /**
+         * 表示域の取得
+         */
+        viewport(): Element {
+            return this.$refs['momiji-mag-viewport'] as Element;
+        }
+
+        /**
+         * 描画部分の取得
+         */
+        canvas(): Element {
+            return this.$refs['momiji-mag-canvas'] as Element;
+        }
+
+        /**
+         * キャンバス可動域を算出
+         */
+        translateLimit(): Momiji2D {
+            const viewport = this.viewport().getBoundingClientRect();
+            const canvas = this.canvas().getBoundingClientRect();
+
+            return new Momiji2D((canvas.width - viewport.width) / 2, (canvas.height - viewport.height) / 2);
         }
     }
 </script>

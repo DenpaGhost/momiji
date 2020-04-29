@@ -7,7 +7,7 @@ export default class Momiji2D {
      * TouchをMomiji2Dに変換
      * @param touch
      */
-    static to2D(touch: Touch): Momiji2D {
+    static to(touch: Touch): Momiji2D {
         return new Momiji2D(touch.pageX, touch.pageY);
     }
 

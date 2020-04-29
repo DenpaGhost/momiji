@@ -6,7 +6,6 @@ export default class MomijiPinching {
     movingPair: MomijiFingerPair;
 
     scaleWeight: number = 1;
-    translateWeight: Momiji2D = new Momiji2D();
 
     private constructor(finger1: Momiji2D, finger2: Momiji2D) {
         this.initPair = new MomijiFingerPair(finger1, finger2);
@@ -26,7 +25,7 @@ export default class MomijiPinching {
     }
 
     private static mightConvert(value: Momiji2D | Touch): Momiji2D {
-        return value instanceof Touch ? Momiji2D.to2D(value) : value;
+        return value instanceof Touch ? Momiji2D.to(value) : value;
     }
 
     /*
@@ -46,26 +45,6 @@ export default class MomijiPinching {
         } else {
             return scale;
         }
-    }
-
-    translate2D(limit?: Momiji2D): Momiji2D {
-        const diff = Momiji2D.diff(this.movingPair.centerPoint, this.initPair.centerPoint);
-        diff.add(this.translateWeight);
-        if (!limit) return diff;
-
-        if (diff.x > limit.x) {
-            diff.x = limit.x;
-        } else if (diff.x < -limit.x) {
-            diff.x = -limit.x;
-        }
-
-        if (diff.y > limit.y) {
-            diff.y = limit.y;
-        } else if (diff.y < -limit.y) {
-            diff.y = -limit.y;
-        }
-
-        return diff;
     }
 
     /*
@@ -96,9 +75,8 @@ export default class MomijiPinching {
     /**
      * 重みを更新する
      */
-    end(): MomijiPinching {
-        this.scaleWeight = this.scale();
-        this.translateWeight = this.translate2D();
+    end(min?: number, max?: number): MomijiPinching {
+        this.scaleWeight = this.scale(min, max);
         return this;
     }
 }
