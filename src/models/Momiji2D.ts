@@ -58,7 +58,7 @@ export default class Momiji2D {
     x: number;
     y: number;
 
-    constructor(x: number, y: number) {
+    constructor(x: number = 0, y: number = 0) {
         this.x = x;
         this.y = y;
     }
