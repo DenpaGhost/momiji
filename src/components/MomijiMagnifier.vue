@@ -28,14 +28,12 @@
         isPinching = false;
         isPreventing = false;
 
+        handledbeginingZoom = false;
+
         get style() {
             return {
                 transform: `translate(${this.translate2d.x}px, ${this.translate2d.y}px) scale(${this.magnificationRate})`
             }
-        }
-
-        mounted() {
-            console.log(this.translateLimit());
         }
 
         handleTouchMove(event: any): void {
@@ -90,7 +88,12 @@
                         }
                     }
 
-                    this.$emit('zoomed', this.magnificationRate);
+                    if(!this.handledbeginingZoom){
+                        this.$emit('zoombegin');
+                        this.handledbeginingZoom = true;
+                    }
+
+                    this.$emit('zooming', this.magnificationRate);
                 }
             }
         }
@@ -110,6 +113,11 @@
                     if (this.isPreventing) {
                         this.isPreventing = false;
                         document.removeEventListener('touchmove', this.handleTouchMove);
+                    }
+
+                    if(this.handledbeginingZoom && !this.isZooming){
+                        this.$emit('zoomend');
+                        this.handledbeginingZoom = false;
                     }
                 }
             }
@@ -140,6 +148,10 @@
             const y = (canvas.height - viewport.height) / 2 <= 0 ? 0 : (canvas.height - viewport.height) / 2;
 
             return new Momiji2D(x, y);
+        }
+
+        get isZooming() {
+            return this.magnificationRate > 1;
         }
     }
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div class="mag">
-        <momiji-magnifier>
+        <momiji-magnifier @zoombegin="zoomBegin" @zoomend="zoomEnd">
             <img src="/img/material.png" alt="material" class="img-fluid"/>
         </momiji-magnifier>
     </div>
@@ -14,7 +14,13 @@
         components: {MomijiMagnifier}
     })
     export default class FullscreenPreview extends Vue {
+        zoomBegin(){
+            console.log('ズームし始めた');
+        }
 
+        zoomEnd(){
+            console.log('ズームやめた');
+        }
     };
 </script>
 
