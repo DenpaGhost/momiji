@@ -1,12 +1,15 @@
 <template>
-    <momiji-magnifier class="mag" overflow-hidden>
-        <img src="/img/material.png" alt="material" class="img-fluid"/>
-    </momiji-magnifier>
+    <div class="mag">
+        <momiji-magnifier>
+            <img src="/img/material.png" alt="material" class="img-fluid"/>
+        </momiji-magnifier>
+    </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
     import MomijiMagnifier from "../components/MomijiMagnifier.vue";
+
     @Component({
         components: {MomijiMagnifier}
     })

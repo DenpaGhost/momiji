@@ -3,9 +3,11 @@
          @touchmove="dragging"
          @touchend="dragEnd"
          ref="momiji-mag-viewport"
-         :class="{'momiji-mag-overflow-hidden': overflowHidden}">
-        <div :style="style" ref="momiji-mag-canvas">
-            <slot/>
+         class="momiji-mag-viewport">
+        <div class="momiji-mag-positioning">
+            <div :style="style" ref="momiji-mag-canvas">
+                <slot/>
+            </div>
         </div>
     </div>
 </template>
@@ -18,9 +20,6 @@
 
     @Component
     export default class MomijiMagnifier extends Vue {
-        @Prop({type: Boolean, default: false})
-        overflowHidden!: boolean;
-
         pinch?: MomijiPinching;
         swipe?: MomijiSwiping;
         translate2d: Momiji2D = new Momiji2D(0, 0);
@@ -33,6 +32,10 @@
             return {
                 transform: `translate(${this.translate2d.x}px, ${this.translate2d.y}px) scale(${this.magnificationRate})`
             }
+        }
+
+        mounted() {
+            console.log(this.translateLimit());
         }
 
         handleTouchMove(event: any): void {
@@ -133,13 +136,27 @@
             const viewport = this.viewport().getBoundingClientRect();
             const canvas = this.canvas().getBoundingClientRect();
 
-            return new Momiji2D((canvas.width - viewport.width) / 2, (canvas.height - viewport.height) / 2);
+            const x = (canvas.width - viewport.width) / 2 <= 0 ? 0 : (canvas.width - viewport.width) / 2;
+            const y = (canvas.height - viewport.height) / 2 <= 0 ? 0 : (canvas.height - viewport.height) / 2;
+
+            return new Momiji2D(x, y);
         }
     }
 </script>
 
 <style scoped>
-    .momiji-mag-overflow-hidden {
+    .momiji-mag-viewport {
         overflow: hidden;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    .momiji-mag-positioning {
+        display: block;
     }
 </style>
