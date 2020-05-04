@@ -82,6 +82,9 @@
         @Prop({type: Boolean, default: false})
         disableVertical!: boolean;
 
+        @Prop({type: Boolean, default: false})
+        disableInput!: boolean;
+
         position!: MomijiPosition;
         isDragging = false;
         isAnimating = false;
@@ -136,16 +139,18 @@
          * @param event
          */
         dragStart(event: Event): void {
-            if (event instanceof TouchEvent) {
-                this.position = new MomijiPosition(event.touches[0].pageX, event.touches[0].pageY);
-                this.position.finger = 0;
-                document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
-                this.isDragging = true;
+            if (event instanceof TouchEvent && !this.disableInput) {
+                if (event.touches.length == 1) {
+                    this.position = new MomijiPosition(event.touches[0].pageX, event.touches[0].pageY);
+                    this.position.finger = 0;
+                    document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
+                    this.isDragging = true;
 
-                if (this.disableHorizontal && !this.disableVertical) {
-                    this.isSnapVertical = true;
-                } else if (!this.disableHorizontal && this.disableVertical) {
-                    this.isSnapHorizontal = true;
+                    if (this.disableHorizontal && !this.disableVertical) {
+                        this.isSnapVertical = true;
+                    } else if (!this.disableHorizontal && this.disableVertical) {
+                        this.isSnapHorizontal = true;
+                    }
                 }
             }
         }
@@ -155,7 +160,7 @@
          * @param event
          */
         dragging(event: Event): void {
-            if (event instanceof TouchEvent) {
+            if (event instanceof TouchEvent && !this.disableInput) {
                 this.position.event = event;
 
                 // スナップ設定
@@ -184,8 +189,7 @@
          * @param event
          */
         dragEnd(event: Event): void {
-            if (event instanceof TouchEvent
-            ) {
+            if (event instanceof TouchEvent && !this.disableInput) {
                 this.position.event = event;
 
                 document.removeEventListener('touchmove', this.handleTouchMove);
