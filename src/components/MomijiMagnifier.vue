@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Vue} from "vue-property-decorator";
     import MomijiPinching from "~/src/models/fingers/MomijiPinching";
     import Momiji2D from "~/src/models/Momiji2D";
     import MomijiSwiping from "~/src/models/fingers/MomijiSwiping";
@@ -88,7 +88,7 @@
                         }
                     }
 
-                    if(!this.handledbeginingZoom){
+                    if (!this.handledbeginingZoom && this.magnificationRate > 1) {
                         this.$emit('zoombegin');
                         this.handledbeginingZoom = true;
                     }
@@ -115,7 +115,7 @@
                         document.removeEventListener('touchmove', this.handleTouchMove);
                     }
 
-                    if(this.handledbeginingZoom && !this.isZooming){
+                    if (this.handledbeginingZoom && !this.isZooming) {
                         this.$emit('zoomend');
                         this.handledbeginingZoom = false;
                     }

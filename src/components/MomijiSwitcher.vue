@@ -98,6 +98,8 @@
         isShowRightNavigation: boolean = false;
         isShowLeftNavigation: boolean = false;
 
+        isZooming: boolean = false;
+
         /**
          * 要素を動かすスタイルシート
          */
@@ -143,7 +145,6 @@
                 if (event.touches.length == 1) {
                     this.position = new MomijiPosition(event.touches[0].pageX, event.touches[0].pageY);
                     this.position.finger = 0;
-                    document.addEventListener('touchmove', this.handleTouchMove, {passive: false});
                     this.isDragging = true;
 
                     if (this.disableHorizontal && !this.disableVertical) {
