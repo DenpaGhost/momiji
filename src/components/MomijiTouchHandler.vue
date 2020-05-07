@@ -44,7 +44,7 @@
         handleTouchEnd(event: TouchEvent) {
             if (event.touches.length <= 0) {
                 this.detachSwipeEvent();
-            } else if (event.touches.length <= 1) {
+            } else if (event.touches.length == 1) {
                 this.detachPinchEvent();
             }
         }

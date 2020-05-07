@@ -1,4 +1,4 @@
-import MomijiPoint from "~/src/models/MomijiPoint";
+import MomijiPoint from "~/src/models/deprecateds/MomijiPoint";
 
 export default class MomijiDistance {
     point1: MomijiPoint;

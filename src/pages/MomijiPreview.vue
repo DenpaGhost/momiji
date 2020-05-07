@@ -16,7 +16,7 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import Momiji from "~/src/components/Momiji.vue";
+    import Momiji from "~/src/components/Old/Momiji.vue";
 
     @Component({
         components: {Momiji}

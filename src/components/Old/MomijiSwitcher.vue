@@ -60,7 +60,7 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import MomijiPosition from "~/src/models/MomijiPosition";
+    import MomijiPosition from "~/src/models/deprecateds/MomijiPosition";
 
     @Component
     export default class Momiji extends Vue {
