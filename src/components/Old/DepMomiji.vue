@@ -17,8 +17,8 @@
 </template>
 
 <script>
-    import MomijiSwitcher from "@/src/components/Old/MomijiSwitcher";
-    import MomijiMagnifier from "@/src/components/Old/MomijiMagnifier";
+    import MomijiSwitcher from "@/src/components/Old/DepMomijiSwitcher";
+    import MomijiMagnifier from "@/src/components/Old/DepMomijiMagnifier";
 
     export default {
         name: "Momiji",

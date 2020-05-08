@@ -15,7 +15,7 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import MomijiMagnifier from "~/src/components/Old/MomijiMagnifier.vue";
+    import MomijiMagnifier from "~/src/components/Old/DepMomijiMagnifier.vue";
 
     @Component({
         components: {MomijiMagnifier}

@@ -24,7 +24,7 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import MomijiSwitcher from "~/src/components/Old/MomijiSwitcher.vue";
+    import MomijiSwitcher from "~/src/components/Old/DepMomijiSwitcher.vue";
 
     @Component({
         components: {MomijiSwitcher}
