@@ -19,7 +19,7 @@
                     </template>
                 </momiji-switcher>
             </div>
-            <div class="col-12 mt-3">
+            <div class="col-12 my-3">
                 <button type="button"
                         class="btn btn-info"
                         @click="handlePrevious">
@@ -42,6 +42,30 @@
                 <input id="num" type="number" v-model="num"/>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <momiji-loupe ref="loupe" :scale="Scale">
+                    <img src="/img/material.png" alt="material" class="img-fluid"/>
+                </momiji-loupe>
+            </div>
+            <div class="col-12 my-3">
+                <button type="button"
+                        class="btn btn-info"
+                        @click="quickZoom">
+                    Quick Zoom
+                </button>
+
+                <button type="button"
+                        class="btn btn-info"
+                        @click="reset">
+                    Reset
+                </button>
+
+                <label for="scale">scale</label>
+                <input id="scale" v-model="scale" type="number">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -49,20 +73,31 @@
     import {Component, Vue} from "vue-property-decorator";
     import MomijiMagnifier from "~/src/components/Old/DepMomijiMagnifier.vue";
     import MomijiSwitcher from "~/src/components/MomijiSwitcher.vue";
+    import MomijiLoupe from "~/src/MomijiLoupe.vue";
 
     @Component({
-        components: {MomijiSwitcher, MomijiMagnifier}
+        components: {MomijiLoupe, MomijiSwitcher, MomijiMagnifier}
     })
     export default class Preview extends Vue {
         num: string = '0';
+        scale: string = '1';
 
         get translate(): number {
             const num = parseInt(this.num);
-            return isNaN(num) ? 0 : parseInt(this.num);
+            return isNaN(num) ? 0 : num;
+        }
+
+        get Scale(): number {
+            const scale = parseInt(this.scale);
+            return isNaN(scale) ? 1 : scale;
         }
 
         get switcher(): any {
             return this.$refs['momijiSwitch']
+        }
+
+        get loupe(): any {
+            return this.$refs['loupe'];
         }
 
         async handleNext() {
@@ -75,6 +110,14 @@
 
         handleReset() {
             this.switcher.reset();
+        }
+
+        async quickZoom() {
+            await this.loupe.quickZoom();
+        }
+
+        async reset() {
+            await this.loupe.reset();
         }
     }
 </script>
