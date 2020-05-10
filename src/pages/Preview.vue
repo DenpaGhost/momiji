@@ -73,7 +73,7 @@
     import {Component, Vue} from "vue-property-decorator";
     import MomijiMagnifier from "~/src/components/Old/DepMomijiMagnifier.vue";
     import MomijiSwitcher from "~/src/components/MomijiSwitcher.vue";
-    import MomijiLoupe from "~/src/MomijiLoupe.vue";
+    import MomijiLoupe from "~/src/components/MomijiLoupe.vue";
 
     @Component({
         components: {MomijiLoupe, MomijiSwitcher, MomijiMagnifier}
