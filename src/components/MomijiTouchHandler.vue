@@ -1,7 +1,7 @@
 <template>
-    <div @touchstart="handleTouchStart"
-         @touchmove="handleTouchMove"
-         @touchend="handleTouchEnd">
+    <div @touchstart.prevent="handleTouchStart"
+         @touchmove.prevent="handleTouchMove"
+         @touchend.prevent="handleTouchEnd">
         <slot/>
     </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
     <div ref="momiji-mag-viewport"
          class="momiji-mag-viewport">
-        <div>
+        <div class="momiji-mag-positioning">
             <div :style="style">
                 <slot/>
             </div>
@@ -68,10 +68,15 @@
 <style scoped lang="scss">
     .momiji-mag-viewport {
         overflow: hidden;
+
         display: flex;
         justify-content: center;
-        align-content: center;
+        align-items: center;
 
         transition: transform ease-in-out 200ms;
+    }
+
+    .momiji-mag-positioning {
+        display: block;
     }
 </style>

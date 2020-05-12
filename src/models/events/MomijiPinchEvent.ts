@@ -2,7 +2,7 @@ import Momiji2D from "~/src/models/Momiji2D";
 import MomijiFingerPair from "~/src/models/fingers/MomijiFingerPair";
 
 export default class MomijiPinchEvent {
-    private fingerPair: MomijiFingerPair;
+    fingerPair: MomijiFingerPair;
 
     constructor(finger1: Momiji2D | Touch, finger2: Momiji2D | Touch) {
         finger1 = finger1 instanceof Touch ? Momiji2D.to(finger1) : finger1;

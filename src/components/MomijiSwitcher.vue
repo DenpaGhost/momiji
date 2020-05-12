@@ -1,7 +1,8 @@
 <template>
     <div class="momiji-sw-outer">
         <div class="momiji-sw-transformer" :style="style">
-            <div class="momiji-sw-container momiji-sw-previous">
+            <div v-if="!disablePrevious"
+                 class="momiji-sw-container momiji-sw-previous">
                 <slot name="previous"/>
             </div>
 
@@ -9,7 +10,8 @@
                 <slot name="focus"/>
             </div>
 
-            <div class="momiji-sw-container momiji-sw-next">
+            <div v-if="!disableNext"
+                 class="momiji-sw-container momiji-sw-next">
                 <slot name="next"/>
             </div>
         </div>
@@ -17,15 +19,39 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 
     @Component
     export default class MomijiSwitcher extends Vue {
+        /*
+         * states
+         */
+        @Prop({type: Boolean, default: false})
+        isSwiping!: boolean;
+
         @Prop({type: Number, default: 0})
         translateX!: number;
 
+        @Prop({type: Boolean, default: false})
+        disablePrevious!: boolean;
+
+        @Prop({type: Boolean, default: false})
+        disableNext!: boolean;
+
+
+        /*
+         * settings
+         */
+
         @Prop({type: Number, default: 200})
         animDuration!: number;
+
+        @Prop({type: Number, default: 120})
+        sensibility!: number;
+
+        /*
+         * Properties
+         */
 
         l_translateX?: string;
         l_duration: number = 0;
@@ -37,11 +63,35 @@
             }
         }
 
+        /*
+         * handler
+         */
+        @Watch('isSwiping')
+        onChangeSwipingStatus() {
+            if (!this.isSwiping) {
+                console.log(`呼ばれた : ${this.translateX}`);
+                if (this.translateX > this.sensibility) {
+                    this.switchPrevious();
+                } else if (this.translateX < -this.sensibility) {
+                    this.switchNext();
+                } else {
+                    this.reset();
+                }
+            }
+        }
+
+
+        /*
+         * methods
+         */
+
+
         async switchNext() {
             this.l_duration = this.animDuration;
             this.l_translateX = 'calc(-100% - 10px)';
             await this.waitForMs(this.animDuration);
-            this.$emit('switchnext');
+            this.$emit('next');
+            this.l_translateX = undefined;
             this.l_duration = 0;
         }
 
@@ -49,11 +99,13 @@
             this.l_duration = this.animDuration;
             this.l_translateX = 'calc(100% + 10px)';
             await this.waitForMs(this.animDuration);
-            this.$emit('switchprevious');
+            this.$emit('previous');
+            this.l_translateX = undefined;
             this.l_duration = 0;
         }
 
         async reset() {
+            this.$emit('reset');
             this.l_duration = this.animDuration;
             this.l_translateX = undefined;
             await this.waitForMs(this.l_duration);
@@ -90,7 +142,8 @@
 
         position: absolute;
         display: flex;
-        align-content: center;
+        align-items: center;
+        justify-content: center;
     }
 
     .momiji-sw-previous {
