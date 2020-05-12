@@ -2,7 +2,8 @@
     <div ref="momiji-mag-viewport"
          class="momiji-mag-viewport">
         <div class="momiji-mag-positioning">
-            <div :style="style">
+            <div ref="momiji-mag-canvas"
+                 :style="style">
                 <slot/>
             </div>
         </div>
@@ -10,7 +11,8 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
+    import Momiji2D from "~/src/models/Momiji2D";
 
     @Component
     export default class MomijiLoupe extends Vue {
@@ -34,7 +36,7 @@
 
         get style() {
             return {
-                transform: `scale(${this.l_scale ?? this.scale})`,
+                transform: `translate(${this.translateX}px, ${this.translateY}px) scale(${this.l_scale ?? this.scale})`,
                 transition: `transform ease-in-out ${this.l_animDuration}ms`
             }
         }
@@ -61,6 +63,37 @@
             return new Promise(resolve => {
                 setTimeout(resolve, ms);
             });
+        }
+
+        /*
+        Members
+         */
+
+        viewport(): Element {
+            return this.$refs['momiji-mag-viewport'] as Element;
+        }
+
+        canvas(): Element {
+            return this.$refs['momiji-mag-canvas'] as Element;
+        }
+
+        translateLimit(): Momiji2D {
+            const viewport = this.viewport().getBoundingClientRect();
+            const canvas = this.canvas().getBoundingClientRect();
+
+            const x = (canvas.width - viewport.width) / 2 <= 0 ? 0 : (canvas.width - viewport.width) / 2;
+            const y = (canvas.height - viewport.height) / 2 <= 0 ? 0 : (canvas.height - viewport.height) / 2;
+
+            return new Momiji2D(x, y);
+        }
+
+        /*
+        Watcher
+         */
+
+        @Watch('scale')
+        onScaleUpdate() {
+            this.$emit('updatelimit', this.translateLimit());
         }
     }
 </script>
