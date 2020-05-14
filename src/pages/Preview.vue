@@ -71,12 +71,11 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import MomijiMagnifier from "~/src/components/Old/DepMomijiMagnifier.vue";
     import MomijiSwitcher from "~/src/components/MomijiSwitcher.vue";
     import MomijiLoupe from "~/src/components/MomijiLoupe.vue";
 
     @Component({
-        components: {MomijiLoupe, MomijiSwitcher, MomijiMagnifier}
+        components: {MomijiLoupe, MomijiSwitcher}
     })
     export default class Preview extends Vue {
         num: string = '0';
