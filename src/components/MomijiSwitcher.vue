@@ -69,7 +69,6 @@
         @Watch('isSwiping')
         onChangeSwipingStatus() {
             if (!this.isSwiping) {
-                console.log(`呼ばれた : ${this.translateX}`);
                 if (this.translateX > this.sensibility) {
                     this.switchPrevious();
                 } else if (this.translateX < -this.sensibility) {
