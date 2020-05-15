@@ -1,13 +1,15 @@
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'app.js'
+        filename: '[name].js'
     },
     devServer: {
+        historyApiFallback: true,
         contentBase: path.resolve(__dirname, './static'),
         publicPath: '/'
     },
@@ -31,21 +33,29 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                loader: "vue-loader"
+                loader: "vue-loader",
+                options: {
+                    extractCSS: false
+                }
             },
             {
                 test: /\.js$/,
                 loader: "babel-loader"
             },
             {
-                test: /\.{css|sass|scss}$/,
-                loader: 'sass-loader',
-                options: {
-                    outputStyle: 'expanded',
-                    sourceMap: true
-                }
+                test: /\.(scss|sass|css)$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'sass-loader'
+                ]
             }
         ]
     },
-    plugins: [new VueLoaderPlugin()]
+    plugins: [
+        new VueLoaderPlugin(),
+        new MiniCssExtractPlugin({
+            filename: 'style.css'
+        })
+    ]
 };

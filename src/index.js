@@ -1,9 +1,16 @@
+import 'bootstrap';
+import '~/resource/style/app.scss';
+
 import Vue from "vue";
-import Base from "~/src/components/Base";
+import VueRouter from 'vue-router';
+import route from "~/src/routes/route";
 
-Vue.component('v-base', Base);
+Vue.use(VueRouter);
 
-new Vue({
+const router = new VueRouter(route);
+
+const app = new Vue({
+    router,
     el: '#app',
-    template: '<v-base/>'
+    template: '<router-view></router-view>'
 });
