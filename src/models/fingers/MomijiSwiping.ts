@@ -6,7 +6,7 @@ export default class MomijiSwiping {
 
     weight: Momiji2D = new Momiji2D();
 
-    private constructor(initPoint: Momiji2D) {
+    protected constructor(initPoint: Momiji2D) {
         this.initPoint = initPoint;
         this.movingPoint = initPoint;
     }
@@ -29,8 +29,7 @@ export default class MomijiSwiping {
      */
 
     translate2D(limit?: Momiji2D): Momiji2D {
-        const diff = Momiji2D.diff(this.movingPoint, this.initPoint);
-        diff.add(this.weight);
+        const diff = this.diff.add(this.weight);
 
         if (!limit) return diff;
 
@@ -49,6 +48,10 @@ export default class MomijiSwiping {
         return diff;
     }
 
+    get diff(): Momiji2D {
+        return Momiji2D.diff(this.movingPoint, this.initPoint);
+    }
+
     /*
      * instance methods
      */
@@ -56,6 +59,7 @@ export default class MomijiSwiping {
     start(finger: Momiji2D | Touch): MomijiSwiping {
         finger = finger instanceof Touch ? Momiji2D.to(finger) : finger;
         this.initPoint = finger;
+        this.movingPoint = finger;
         return this;
     }
 

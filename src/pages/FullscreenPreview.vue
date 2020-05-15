@@ -1,25 +1,38 @@
 <template>
-    <div class="mag">
-        <momiji-magnifier @zoombegin="zoomBegin" @zoomend="zoomEnd">
-            <img src="/img/material.png" alt="material" class="img-fluid"/>
-        </momiji-magnifier>
-    </div>
+    <momiji class="mag"
+            @next="switchImage"
+            @previous="switchImage">
+        <template v-slot:previous>
+            <img :src="images[flag ? 1:0]" alt="material" class="img-fluid"/>
+        </template>
+        <template v-slot:focus>
+            <img :src="images[flag ? 0:1]" alt="material" class="img-fluid"/>
+        </template>
+        <template v-slot:next>
+            <img :src="images[flag ? 1:0]" alt="material" class="img-fluid"/>
+        </template>
+    </momiji>
 </template>
 
 <script lang="ts">
+
     import {Component, Vue} from "vue-property-decorator";
-    import MomijiMagnifier from "../components/MomijiMagnifier.vue";
+    import MomijiSwitcher from "~/src/components/MomijiSwitcher.vue";
+    import Momiji from "~/src/components/Momiji.vue";
 
     @Component({
-        components: {MomijiMagnifier}
+        components: {Momiji, MomijiSwitcher}
     })
     export default class FullscreenPreview extends Vue {
-        zoomBegin(){
-            console.log('ズームし始めた');
-        }
+        flag: boolean = false;
 
-        zoomEnd(){
-            console.log('ズームやめた');
+        images: string[] = [
+            '/img/material.png',
+            '/img/windows-xp-bliss-4k-lu.jpg'
+        ]
+
+        switchImage() {
+            this.flag = !this.flag;
         }
     };
 </script>
