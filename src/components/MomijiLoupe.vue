@@ -13,6 +13,8 @@
 <script lang="ts">
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import Momiji2D from "~/src/models/Momiji2D";
+    import MomijiLoupeQuickZoomingEvent from "~/src/models/events/MomijiLoupeQuickZoomingEvent";
+    import Momiji from "~/src/components/Momiji.vue";
 
     @Component
     export default class MomijiLoupe extends Vue {
@@ -32,11 +34,12 @@
         quickZoomScale!: number;
 
         l_scale?: number;
+        l_translate?: Momiji2D;
         l_animDuration: number = 0;
 
         get style() {
             return {
-                transform: `translate(${this.translateX}px, ${this.translateY}px) scale(${this.l_scale ?? this.scale})`,
+                transform: `translate(${this.l_translate ? this.l_translate.x : this.translateX}px, ${this.l_translate ? this.l_translate.y : this.translateY}px) scale(${this.l_scale ?? this.scale})`,
                 transition: `transform ease-in-out ${this.l_animDuration}ms`
             }
         }
@@ -44,19 +47,21 @@
         async quickZoom() {
             this.l_animDuration = this.animDuration;
             this.l_scale = this.quickZoomScale;
-            await this.waitForMs(this.animDuration);
+            await this.waitForMs(this.animDuration + 100); // 動作ラグによりキャンバス移動限界がズレる場合があるため余裕を持たせてます。
             this.l_animDuration = 0;
-            this.$emit('quickzoomed', this.quickZoomScale);
+            this.$emit('quickzoomed', new MomijiLoupeQuickZoomingEvent(this.quickZoomScale, new Momiji2D()));
             this.l_scale = undefined;
         }
 
         async reset() {
             this.l_animDuration = this.animDuration;
             this.l_scale = 1;
-            await this.waitForMs(this.animDuration);
+            this.l_translate = new Momiji2D();
+            await this.waitForMs(this.animDuration + 100); // 動作ラグによりキャンバス移動限界がズレる場合があるため余裕を持たせてます。
             this.l_animDuration = 0;
-            this.$emit('scalereset', 1);
+            this.$emit('scalereset', new MomijiLoupeQuickZoomingEvent(1, new Momiji2D()));
             this.l_scale = undefined;
+            this.l_translate = undefined;
         }
 
         waitForMs(ms: number): Promise<void> {

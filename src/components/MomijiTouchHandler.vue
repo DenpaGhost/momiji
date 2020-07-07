@@ -14,19 +14,24 @@
      * pinchstart
      * pinchmove
      * pinchend
+     * doubleTap
      */
     import {Component, Vue} from "vue-property-decorator";
     import MomijiSwipeEvent from "~/src/models/events/MomijiSwipeEvent";
     import MomijiPinchEvent from "~/src/models/events/MomijiPinchEvent";
+    import MomijiTapping from "~/src/models/fingers/MomijiTapping";
+    import MomijiDoubleTapEvent from "~/src/models/events/MomijiDoubleTapEvent";
 
     @Component
     export default class MomijiTouchHandler extends Vue {
         swipeEvent?: MomijiSwipeEvent;
         pinchEvent?: MomijiPinchEvent;
+        doubleTapping?: MomijiTapping;
 
         handleTouchStart(event: TouchEvent) {
             if (event.touches.length == 1) {
                 this.attachSwipeEvent(event.touches[0]);
+                this.emitDoubleTappingEvent(event.touches[0]);
             } else if (event.touches.length == 2) {
                 this.detachSwipeEvent();
                 this.attachPinchEvent(event.touches[0], event.touches[1]);
@@ -85,6 +90,20 @@
         detachPinchEvent() {
             this.pinchEvent = undefined;
             this.$emit('pinchend');
+        }
+
+        emitDoubleTappingEvent(touch: Touch) {
+            if (this.doubleTapping) {
+                this.doubleTapping.tap(performance.now());
+            } else {
+                this.doubleTapping = MomijiTapping.tap(performance.now());
+            }
+
+            if (this.doubleTapping.isDoubleTapping) {
+                console.log('double tapping');
+                this.$emit('doubletap', new MomijiDoubleTapEvent(touch));
+                this.doubleTapping = undefined;
+            }
         }
     };
 </script>

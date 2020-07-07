@@ -6,7 +6,8 @@
             @swipeend="swipeEnd"
             @pinchstart="pinchStart"
             @pinchmove="pinchMove"
-            @pinchend="pinchEnd">
+            @pinchend="pinchEnd"
+            @doubletap="doubleTapping">
         <momiji-switcher class="momiji-wh-100"
                          :is-swiping="sw_model != null"
                          :translate-x="sw_translateX"
@@ -21,8 +22,8 @@
             <template v-slot:focus>
                 <momiji-loupe ref="momiji-loupe"
                               class="momiji-wh-100"
-                              @quickzoomed=""
-                              @scalereset=""
+                              @quickzoomed="quickZoomed"
+                              @scalereset="quickReset"
                               @updatelimit="onUpdateCanvasTranslateLimit"
                               :scale="pi_scale"
                               :translate-x="pi_translate.x"
@@ -49,6 +50,8 @@
     import MomijiPinching from "~/src/models/fingers/MomijiPinching";
     import Momiji2D from "~/src/models/Momiji2D";
     import MomijiSwiping from "~/src/models/fingers/MomijiSwiping";
+    import MomijiDoubleTapEvent from "~/src/models/events/MomijiDoubleTapEvent";
+    import MomijiLoupeQuickZoomingEvent from "~/src/models/events/MomijiLoupeQuickZoomingEvent";
 
     @Component({
         components: {MomijiLoupe, MomijiSwitcher, MomijiTouchHandler}
@@ -140,7 +143,6 @@
             if (this.pi_model != null) {
                 this.pi_model.move(event.fingerPair.finger1, event.fingerPair.finger2);
                 this.pi_scale = this.pi_model.scale(1, 4);
-
                 this.isZooming = this.pi_scale > 1;
             }
 
@@ -158,6 +160,36 @@
             if (this.canvas_sw_model != null) {
                 this.canvas_sw_model.end(this.pi_translateLimit);
             }
+        }
+
+        doubleTapping(event: MomijiDoubleTapEvent) {
+            if (this.isZooming) {
+                this.loupe().reset();
+            } else {
+                this.loupe().quickZoom();
+            }
+        }
+
+        quickZoomed(event: MomijiLoupeQuickZoomingEvent) {
+            this.pi_scale = event.scale;
+
+            if (this.pi_model == null) {
+                this.pi_model = MomijiPinching.start(new Momiji2D(), new Momiji2D());
+            }
+
+            if (this.canvas_sw_model != null) {
+                this.canvas_sw_model.weight = event.translate;
+            }
+
+            this.pi_model.scaleWeight = event.scale;
+            this.isZooming = true;
+        }
+
+        quickReset(event: MomijiLoupeQuickZoomingEvent) {
+            this.pi_translate = event.translate;
+            this.pi_scale = event.scale;
+            this.pi_model = null;
+            this.isZooming = false;
         }
 
         /*
